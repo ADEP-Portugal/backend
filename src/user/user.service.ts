@@ -2,6 +2,8 @@ import { ConflictException, Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../common/services/prisma.service';
 import { AuthUser } from '../auth/auth-user';
 import { UpdateUserRequest, UserResponse } from './models';
+import { AppointmentResponse } from 'src/appointment/models';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService {
@@ -13,6 +15,11 @@ export class UserService {
     });
   }
 
+  public async fetchAll(): Promise<UserResponse[]> {
+    const users = await this.prisma.user.findMany();
+    return users.map((user) => UserResponse.fromUserEntity(user));
+  }
+
   async updateUser(
     userId: string,
     updateRequest: UpdateUserRequest,
@@ -22,6 +29,9 @@ export class UserService {
         where: { id: userId },
         data: {
           ...updateRequest,
+          passwordHash: updateRequest.passwordHash
+            ? await bcrypt.hash(updateRequest.passwordHash, 10)
+            : undefined,
         },
       });
 

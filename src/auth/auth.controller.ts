@@ -11,10 +11,8 @@ import {
   Req,
   Res,
   UnauthorizedException,
-  UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
 import { Usr } from '../user/user.decorator';
 import {
@@ -23,14 +21,14 @@ import {
   CheckEmailRequest,
   CheckEmailResponse,
   LoginRequest,
-  LoginResponse,
   ResetPasswordRequest,
   SignupRequest,
 } from './models';
 import { UserResponse } from '../user/models';
-import { AuthUser } from './auth-user';
 import { JwtPayload } from './jwt-payload';
-import { Request, Response } from 'express';
+import { Response } from 'express';
+import { decrypt } from 'src/utils/crypto.util';
+import { AuthCookieGuard } from 'src/common/guards/auth-cookie.guard';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -61,26 +59,26 @@ export class AuthController {
     const jwtPayload: JwtPayload = {
       id: user.id,
       email: user.email,
+      fullName: user.fullName,
     };
-    this.authService.setRefreshToken(jwtPayload, res);
-    const accessToken = await this.authService.generateAccessToken(jwtPayload);
-    return res.json(new LoginResponse(user, accessToken));
+    await this.authService.setAuthToken(jwtPayload, res);
+    return res.json(user);
   }
 
   @ApiBearerAuth()
   @Get()
   @HttpCode(HttpStatus.OK)
-  @UseGuards(AuthGuard())
-  async getUserWithToken(@Usr() user: AuthUser): Promise<UserResponse> {
-    return UserResponse.fromUserEntity(user);
+  async getUserWithToken(
+    @AuthCookieGuard() accessToken: string,
+  ): Promise<UserResponse> {
+    return await this.authService.getUserFromToken(decrypt(accessToken));
   }
 
   @ApiBearerAuth()
   @Post('change-email')
   @HttpCode(HttpStatus.OK)
-  @UseGuards(AuthGuard())
   async sendChangeEmailMail(
-    @Usr() user: AuthUser,
+    @Usr() user: JwtPayload,
     @Body() changeEmailRequest: ChangeEmailRequest,
   ): Promise<void> {
     await this.authService.sendChangeEmailMail(
@@ -105,10 +103,9 @@ export class AuthController {
 
   @Post('change-password')
   @HttpCode(HttpStatus.OK)
-  @UseGuards(AuthGuard())
   async changePassword(
     @Body() changePasswordRequest: ChangePasswordRequest,
-    @Usr() user: AuthUser,
+    @Usr() user: JwtPayload,
   ): Promise<void> {
     await this.authService.changePassword(
       changePasswordRequest,
@@ -126,28 +123,13 @@ export class AuthController {
     await this.authService.resetPassword(resetPasswordRequest);
   }
 
-  @Get('refresh')
-  async refreshToken(@Req() req: Request, @Res() res: Response) {
-    const refreshToken = req.cookies['refresh_token'];
-
-    if (!refreshToken) {
-      throw new UnauthorizedException('Nenhum refresh token encontrado');
-    }
-
-    const user = await this.authService.getUserFromToken(refreshToken);
-
-    if (!user) {
-      throw new UnauthorizedException('Refresh token inválido ou expirado');
-    }
-
-    const newAccessToken =
-      await this.authService.refreshAccessToken(refreshToken);
-
-    try {
-      return res.json(new LoginResponse(user, newAccessToken));
-    } catch (error) {
-      Logger.error(`Falha ao renovar token: ${error.message}`);
-      throw new UnauthorizedException('Falha ao renovar token');
-    }
+  @Post('logout')
+  logout(@Res() res: Response) {
+    res.clearCookie('auth_token', {
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: process.env.NODE_ENV === 'production',
+    });
+    return res.json({ message: 'Logout realizado com sucesso' });
   }
 }

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Coming Soon - Beampen</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body, html {
+      height: 100%;
+      width: 100%;
+      font-family: Arial, sans-serif;
+      overflow: hidden;
+    }
+
+    .background-video {
+      position: fixed;
+      right: 0;
+      bottom: 0;
+      min-width: 100%;
+      min-height: 100%;
+      z-index: -1;
+      object-fit: cover;
+    }
+
+    header {
+      position: absolute;
+      top: 20px;
+      left: 40px;
+      color: white;
+      font-size: 1.5rem;
+      font-weight: bold;
+      text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.7);
+    }
+
+    .content {
+      position: absolute;
+      top: 50%;
+      left: 10%;
+      transform: translateY(-50%);
+      color: white;
+      text-align: left;
+    }
+
+    .content p {
+      font-size: 1.5rem;
+      margin-bottom: 10px;
+      text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.7);
+    }
+
+    .content h1 {
+      font-size: 5rem;
+      text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
+    }
+  </style>
+</head>
+<body>
+
+<video autoplay muted loop class="background-video">
+  <source src="https://video.wixstatic.com/video/84770f_ab40c53f8f6f48e184d6b605f9e17cc9/1080p/mp4/file.mp4" type="video/mp4">
+  Your browser does not support HTML5 video.
+</video>
+
+<header>Beampen</header>
+
+<div class="content">
+  <p>We're almost there</p>
+  <h1>Coming<br />Soon</h1>
+</div>
+
+</body>
+</html>

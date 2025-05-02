@@ -1,0 +1,1 @@
+export { EventResponse } from './event.response';

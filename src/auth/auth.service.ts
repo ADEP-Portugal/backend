@@ -6,7 +6,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
-import { JwtService } from '@nestjs/jwt';
+import { JsonWebTokenError, JwtService, TokenExpiredError } from '@nestjs/jwt';
 import { nanoid, customAlphabet } from 'nanoid';
 import { Prisma } from '@prisma/client';
 import { UserService } from '../user/user.service';
@@ -24,6 +24,7 @@ import { AuthUser } from './auth-user';
 import { PrismaService } from '../common/services/prisma.service';
 import { Response } from 'express';
 import { UserResponse } from 'src/user/models';
+import { encrypt } from 'src/utils/crypto.util';
 
 @Injectable()
 export class AuthService {
@@ -259,54 +260,49 @@ export class AuthService {
     return user === null;
   }
 
-  async generateAccessToken(jwtPayload: JwtPayload): Promise<string> {
+  async setAuthToken(jwtPayload: JwtPayload, res: Response) {
     const token = await this.jwtService.signAsync(jwtPayload, {
       expiresIn: '1h',
     });
-    return token;
-  }
-
-  setRefreshToken(jwtPayload: JwtPayload, res: Response) {
-    const refreshToken = this.jwtService.sign(jwtPayload, { expiresIn: '7d' });
-
-    res.cookie('refresh_token', refreshToken, {
+    res.cookie('auth_token', encrypt(token), {
       httpOnly: true,
       secure: false,
       sameSite: 'lax',
+      signed: true,
       path: '/',
+      maxAge: 1000 * 60 * 60 * 24 * 30, // 1 month
     });
   }
 
-  async refreshAccessToken(refreshToken: string): Promise<string> {
+  async getUserFromToken(token: string): Promise<UserResponse> {
     try {
-      const payload: JwtPayload = this.jwtService.verify(refreshToken);
-      const newAccessToken = this.generateAccessToken({
-        email: payload.email,
-        id: payload.id,
+      const payload: JwtPayload = this.jwtService.verify(token);
+      const user = await this.prisma.user.findFirst({
+        where: { id: payload.id },
+        select: {
+          id: true,
+          email: true,
+          passwordHash: true,
+          fullName: true,
+          role: true,
+          imageUrl: true,
+          registrationDate: true,
+        },
       });
-      return newAccessToken;
-    } catch (error) {
-      throw new UnauthorizedException('Refresh token inválido ou expirado');
+      if (user === null) {
+        throw new UnauthorizedException();
+      }
+      return UserResponse.fromUserEntity(user);
+    } catch (e) {
+      if (e instanceof Prisma.PrismaClientKnownRequestError) {
+        if (e.code === 'P2002') {
+          throw new ConflictException();
+        } else throw e;
+      } else if (e instanceof TokenExpiredError) {
+        throw new UnauthorizedException();
+      } else {
+        throw e;
+      }
     }
-  }
-
-  async getUserFromToken(refreshToken: string): Promise<UserResponse> {
-    const payload: JwtPayload = this.jwtService.verify(refreshToken);
-    const user = await this.prisma.user.findFirst({
-      where: { id: payload.id },
-      select: {
-        id: true,
-        email: true,
-        passwordHash: true,
-        fullName: true,
-        role: true,
-        imageUrl: true,
-        registrationDate: true,
-      },
-    });
-    if (user === null) {
-      throw new UnauthorizedException();
-    }
-    return UserResponse.fromUserEntity(user);
   }
 }

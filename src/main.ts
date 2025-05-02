@@ -16,7 +16,9 @@ async function bootstrap() {
 
   app.use(requestIp.mw());
 
-  app.use(cookieParser());
+  const secret = 'sua_chave_secreta_123';
+
+  app.use(cookieParser(secret));
 
   app.use(helmet());
 

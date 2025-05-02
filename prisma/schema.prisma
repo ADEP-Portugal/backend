@@ -39,8 +39,244 @@ model User {
   imageUrl             String?
   registrationDate  DateTime           @default(dbgenerated("timezone('UTC'::text, now())")) @db.Timestamp(6)
   emailChange       EmailChange?
+  appointments       Appointment[]
+  lawsuit       Lawsuit[]
+  task       Task[]
   passwordReset     PasswordReset?
   role      Role     @default(USER)
 
   @@map("user")
+}
+
+model Event {
+  id String @id @default(uuid()) @db.Uuid
+  name      String
+  date DateTime @db.Date
+  time             String
+  location             String
+  description             String
+  deletedAt DateTime?
+  createdAt DateTime @default(dbgenerated("timezone('UTC'::text, now())")) @db.Timestamp(6)
+  updatedAt DateTime?
+
+  @@map("event")
+}
+
+enum AppointmentType {
+  PRESENCIAL
+  TELEPHONE
+}
+
+enum Gender {
+  MASCULINE
+  FEMININE
+}
+
+model Appointment {
+  id String @id @default(uuid()) @db.Uuid
+  client      String
+  reason      String
+  date DateTime @db.Date
+  time             String
+  type             AppointmentType
+  gender             Gender
+  associate  Boolean
+  responsible     String      @db.Uuid
+  user       User     @relation(fields: [responsible], references: [id], onDelete: Cascade)
+  description             String
+  deletedAt DateTime?
+  createdAt DateTime @default(dbgenerated("timezone('UTC'::text, now())")) @db.Timestamp(6)
+  updatedAt DateTime?
+
+  @@map("appointment")
+}
+
+enum DocumentType {
+  ID_CARD
+  PASSPORT
+  OTHER
+}
+
+enum LawsuitStatus {
+  REGISTERED
+  IN_PROCESS
+  COMPLETED
+  ARCHIVED
+  CANCELED
+  PENDING
+}
+
+enum LawsuitOrderType {
+  FOLLOW_UP
+  AIMA_SCHEDULING
+  RESIDENCE_CERTIFICATE
+  MISCELLANEOUS_LETTERS
+  DRIVER_LICENSE
+  BIRTH_CERTIFICATE
+  CURRICULUM_VITAE
+  IRS_STATEMENT
+  DECLARATION_AUTHORIZATION
+  RESIDENCE_INSTRUCTION
+  EXPRESSION_INTEREST
+  PROCURATION
+  SIGNATURE_RECOGNITION
+  CRIMINAL_RECORD
+  RENEWAL_RESIDENCE_CERTIFICATE
+  ID_RENEWAL
+  CPLP_RESIDENCE
+  NIF_REQUEST
+  NISS_REQUEST
+  DRIVING_LICENSE_EXCHANGE
+  OTHER
+}
+
+enum PaymentStatus {
+  PAID
+  NOT_PAID
+  PENDING
+}
+
+enum LawsuitType {
+  ASSOCIATE
+  NON_ASSOCIATE
+}
+
+model Lawsuit {
+  id String @id @default(uuid()) @db.Uuid
+  client             String
+  birthday             DateTime @db.Date
+  phone             String
+  email             String
+  status             LawsuitStatus
+  orderType             LawsuitOrderType
+  documentType             DocumentType?
+  paymentStatus             PaymentStatus
+  type             LawsuitType
+  document             String?
+  documentEmissionDate             DateTime? @db.Date
+  documentExpirationDate             DateTime? @db.Date
+  orderDate             DateTime @db.Date
+  deadline             DateTime @db.Date
+  responsible     String      @db.Uuid
+  user       User     @relation(fields: [responsible], references: [id], onDelete: Cascade)
+  description             String
+  fileNames             String[]
+  task             Task[]
+  deletedAt DateTime?
+  createdAt DateTime @default(dbgenerated("timezone('UTC'::text, now())")) @db.Timestamp(6)
+  updatedAt DateTime?
+
+  @@map("lawsuit")
+}
+
+enum Nationality {
+  BRAZILIAN
+  MOZAMBICAN
+  PORTUGUESE
+  OTHER
+}
+
+enum EducationLevel {
+  PRIMARY
+  SECONDARY
+  HIGHER
+  HIGHER_TECHNICAL
+  MASTER
+  DOCTORATE
+  POST_DOCTORATE
+  OTHER
+}
+
+enum QuotaStatus {
+  PAID
+  PENDING
+}
+
+enum AvailabilityToWork {
+  MORNING
+  AFTERNOON
+  NIGHT
+}
+
+model Associate {
+  id String @id @default(uuid()) @db.Uuid
+  fullName             String
+  email             String
+  gender             Gender
+  phone             String
+  birthday             DateTime @db.Date
+  nationality             Nationality
+  educationLevel             EducationLevel
+  motherLanguage             String?
+  availabilityToWork             AvailabilityToWork[]
+  address             String
+  profissionalExperience             String?
+  areaInterest             String[]
+  associateNumber             String?
+  cardExpirationDate DateTime? @db.Date
+  quotaStatus             QuotaStatus
+  documentType             DocumentType?
+  document             String?
+  documentEmissionDate             DateTime? @db.Date
+  documentExpirationDate   DateTime? @db.Date
+  employmentStatus             String?
+  nif             String?
+  deletedAt DateTime?
+  createdAt DateTime @default(dbgenerated("timezone('UTC'::text, now())")) @db.Timestamp(6)
+  updatedAt DateTime?
+
+  @@map("associate")
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  DONE
+}
+
+model Task {
+  id String @id @default(uuid()) @db.Uuid
+  title             String
+  client             String
+  phone             String
+  deadline             DateTime @db.Date
+  priority             Priority
+  status             TaskStatus @default(TODO)
+  description             String
+  responsible     String      @db.Uuid
+  user       User     @relation(fields: [responsible], references: [id], onDelete: Cascade)
+  lawsuitId     String?      @db.Uuid
+  lawsuit       Lawsuit?     @relation(fields: [lawsuitId], references: [id], onDelete: Cascade)
+  deletedAt DateTime?
+  createdAt DateTime @default(dbgenerated("timezone('UTC'::text, now())")) @db.Timestamp(6)
+  updatedAt DateTime?
+
+  @@map("task")
+}
+
+enum UsefulLinkCategory {
+  INSTITUTIONAL
+  MIGRATION
+  DOCUMENTATION
+  PUBLIC_SERVICES
+  OTHER
+}
+
+model UsefulLink {
+  id String @id @default(uuid()) @db.Uuid
+  title             String
+  url             String
+  category             UsefulLinkCategory
+  description             String?
+  deletedAt DateTime?
+  createdAt DateTime @default(dbgenerated("timezone('UTC'::text, now())")) @db.Timestamp(6)
+  updatedAt DateTime?
+
+  @@map("useful-link")
 }
