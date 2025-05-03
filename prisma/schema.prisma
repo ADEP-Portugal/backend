@@ -19,7 +19,7 @@ model EmailChange {
 
 model PasswordReset {
   token      String   @id @db.Char(21)
-  userId  String @unique @db.Char(36) @unique
+  userId  String @unique @db.Char(36)
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   validUntil DateTime @default(dbgenerated("(timezone('utc'::text, now()) + '2 days'::interval)")) @db.Timestamp(6)
 
