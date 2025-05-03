@@ -47,7 +47,6 @@ export class EventService {
         ...(name && {
           name: {
             contains: name,
-            mode: 'insensitive',
           },
         }),
         ...(period && {
@@ -103,7 +102,6 @@ export class EventService {
       ...(name && {
         name: {
           contains: name,
-          mode: 'insensitive',
         },
       }),
       ...(period && {

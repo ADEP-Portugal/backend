@@ -24,7 +24,7 @@ export class AppointmentController {
 
   @ApiBearerAuth()
   @Get()
-  @UseGuards(AuthCookieGuardion)
+  
   @HttpCode(HttpStatus.OK)
   async fetchAll(
     @Query('page') page?: number,
@@ -40,7 +40,7 @@ export class AppointmentController {
 
   @ApiBearerAuth()
   @Get(':id')
-  @UseGuards(AuthCookieGuardion)
+  
   @HttpCode(HttpStatus.OK)
   async fetchById(@Param('id') id: string): Promise<AppointmentResponse> {
     return this.appointmentService.fetchById(id);
@@ -48,7 +48,7 @@ export class AppointmentController {
 
   @ApiBearerAuth()
   @Post()
-  @UseGuards(AuthCookieGuardion)
+  
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() createRequest: CreateAppointmentRequest): Promise<void> {
     return await this.appointmentService.create(createRequest);
@@ -56,7 +56,7 @@ export class AppointmentController {
 
   @ApiBearerAuth()
   @Put(':id')
-  @UseGuards(AuthCookieGuardion)
+  
   @HttpCode(HttpStatus.OK)
   async update(
     @Param('id') id: string,
@@ -67,7 +67,7 @@ export class AppointmentController {
 
   @ApiBearerAuth()
   @Delete(':id')
-  @UseGuards(AuthCookieGuardion)
+  
   @HttpCode(HttpStatus.OK)
   async delete(@Param('id') id: string): Promise<void> {
     return this.appointmentService.delete(id);

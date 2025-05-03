@@ -23,7 +23,7 @@ export class TaskController {
 
   @ApiBearerAuth()
   @Get()
-  @UseGuards(AuthCookieGuardion)
+  
   @HttpCode(HttpStatus.OK)
   async fetchAll(
     @Query('page') page?: number,
@@ -40,7 +40,7 @@ export class TaskController {
 
   @ApiBearerAuth()
   @Get(':id')
-  @UseGuards(AuthCookieGuardion)
+  
   @HttpCode(HttpStatus.OK)
   async fetchById(@Param('id') id: string): Promise<TaskResponse> {
     return this.lawsuitService.fetchById(id);
@@ -48,7 +48,7 @@ export class TaskController {
 
   @ApiBearerAuth()
   @Post()
-  @UseGuards(AuthCookieGuardion)
+  
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() createRequest: CreateTaskRequest): Promise<void> {
     return await this.lawsuitService.create(createRequest);
@@ -56,7 +56,7 @@ export class TaskController {
 
   @ApiBearerAuth()
   @Put(':id')
-  @UseGuards(AuthCookieGuardion)
+  
   @HttpCode(HttpStatus.OK)
   async update(
     @Param('id') id: string,
@@ -67,7 +67,7 @@ export class TaskController {
 
   @ApiBearerAuth()
   @Delete(':id')
-  @UseGuards(AuthCookieGuardion)
+  
   @HttpCode(HttpStatus.OK)
   async delete(@Param('id') id: string): Promise<void> {
     return this.lawsuitService.delete(id);

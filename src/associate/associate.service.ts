@@ -178,7 +178,6 @@ export class AssociateService {
       ...(name && {
         fullName: {
           startsWith: name,
-          mode: 'insensitive',
         },
       }),
       ...(birthdayPeriod && {

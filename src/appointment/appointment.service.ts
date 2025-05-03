@@ -121,7 +121,6 @@ export class AppointmentService {
       ...(client && {
         client: {
           contains: client,
-          mode: 'insensitive',
         },
       }),
       ...(period && {

@@ -23,7 +23,7 @@ async function bootstrap() {
   app.use(helmet());
 
   app.enableCors({
-    origin: 'http://localhost:5173',
+    origin: 'https://admin.associacaoadip.com',
     credentials: true,
   });
 

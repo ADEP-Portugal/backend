@@ -26,7 +26,6 @@ export class EventController {
 
   @ApiBearerAuth()
   @Get()
-  @UseGuards(AuthCookieGuardion)
   @HttpCode(HttpStatus.OK)
   async fetchAll(
     @Query('page') page?: number,
@@ -42,7 +41,6 @@ export class EventController {
 
   @ApiBearerAuth()
   @Get(':id')
-  @UseGuards(AuthCookieGuardion)
   @HttpCode(HttpStatus.OK)
   async fetchById(@Param('id') id: string): Promise<EventResponse> {
     return this.eventService.fetchById(id);
@@ -50,7 +48,6 @@ export class EventController {
 
   @ApiBearerAuth()
   @Post()
-  @UseGuards(AuthCookieGuardion)
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() createRequest: CreateEventRequest): Promise<void> {
     return await this.eventService.create(createRequest);
@@ -58,7 +55,6 @@ export class EventController {
 
   @ApiBearerAuth()
   @Put(':id')
-  @UseGuards(AuthCookieGuardion)
   @HttpCode(HttpStatus.OK)
   async update(
     @Param('id') id: string,
@@ -69,7 +65,6 @@ export class EventController {
 
   @ApiBearerAuth()
   @Delete(':id')
-  @UseGuards(AuthCookieGuardion)
   @HttpCode(HttpStatus.OK)
   async delete(@Param('id') id: string): Promise<void> {
     return this.eventService.delete(id);

@@ -25,7 +25,7 @@ export class UsefulLinkController {
 
   @ApiBearerAuth()
   @Get()
-  @UseGuards(AuthCookieGuardion)
+  
   @HttpCode(HttpStatus.OK)
   async fetchAll(
     @Query('page') page?: number,
@@ -40,7 +40,7 @@ export class UsefulLinkController {
 
   @ApiBearerAuth()
   @Get(':id')
-  @UseGuards(AuthCookieGuardion)
+  
   @HttpCode(HttpStatus.OK)
   async fetchById(@Param('id') id: string): Promise<UsefulLinkResponse> {
     return this.eventService.fetchById(id);
@@ -48,7 +48,7 @@ export class UsefulLinkController {
 
   @ApiBearerAuth()
   @Post()
-  @UseGuards(AuthCookieGuardion)
+  
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() createRequest: CreateUsefulLinkRequest): Promise<void> {
     return await this.eventService.create(createRequest);
@@ -56,7 +56,7 @@ export class UsefulLinkController {
 
   @ApiBearerAuth()
   @Put(':id')
-  @UseGuards(AuthCookieGuardion)
+  
   @HttpCode(HttpStatus.OK)
   async update(
     @Param('id') id: string,
@@ -67,7 +67,7 @@ export class UsefulLinkController {
 
   @ApiBearerAuth()
   @Delete(':id')
-  @UseGuards(AuthCookieGuardion)
+  
   @HttpCode(HttpStatus.OK)
   async delete(@Param('id') id: string): Promise<void> {
     return this.eventService.delete(id);

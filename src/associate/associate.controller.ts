@@ -28,7 +28,7 @@ export class AssociateController {
 
   @ApiBearerAuth()
   @Get()
-  @UseGuards(AuthCookieGuardion)
+  
   @HttpCode(HttpStatus.OK)
   async fetchAll(
     @Query('page') page?: number,
@@ -46,7 +46,7 @@ export class AssociateController {
 
   @ApiBearerAuth()
   @Get('expiry-date')
-  @UseGuards(AuthCookieGuardion)
+  
   @HttpCode(HttpStatus.OK)
   async expiryDate(): Promise<ExpirationDateAssociateResponse[]> {
     return this.associateService.fetchExpirationDate();
@@ -54,7 +54,7 @@ export class AssociateController {
 
   @ApiBearerAuth()
   @Get('summary')
-  @UseGuards(AuthCookieGuardion)
+  
   @HttpCode(HttpStatus.OK)
   async fetchSummary(): Promise<SummaryAssociateResponse[]> {
     return this.associateService.fetchSummary();
@@ -62,7 +62,7 @@ export class AssociateController {
 
   @ApiBearerAuth()
   @Get(':id')
-  @UseGuards(AuthCookieGuardion)
+  
   @HttpCode(HttpStatus.OK)
   async fetchById(@Param('id') id: string): Promise<AssociateResponse> {
     return this.associateService.fetchById(id);
@@ -70,7 +70,7 @@ export class AssociateController {
 
   @ApiBearerAuth()
   @Post()
-  @UseGuards(AuthCookieGuardion)
+  
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() createRequest: CreateAssociateRequest): Promise<void> {
     return await this.associateService.create(createRequest);
@@ -78,7 +78,7 @@ export class AssociateController {
 
   @ApiBearerAuth()
   @Put(':id')
-  @UseGuards(AuthCookieGuardion)
+  
   @HttpCode(HttpStatus.OK)
   async update(
     @Param('id') id: string,
@@ -89,7 +89,7 @@ export class AssociateController {
 
   @ApiBearerAuth()
   @Delete(':id')
-  @UseGuards(AuthCookieGuardion)
+  
   @HttpCode(HttpStatus.OK)
   async delete(@Param('id') id: string): Promise<void> {
     return this.associateService.delete(id);
