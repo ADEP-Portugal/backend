@@ -6,6 +6,13 @@ import {
   UpdateLawsuitRequest,
 } from './models';
 import { SummaryLawsuitResponse } from './models/summary-lawsuit.response';
+import { Prisma } from '@prisma/client';
+
+type LawsuitWithFileNames = Prisma.LawsuitGetPayload<{
+  include: {
+    fileNames: true
+  };
+}>;
 
 @Injectable()
 export class LawsuitService {
@@ -172,7 +179,7 @@ export class LawsuitService {
         throw new NotFoundException();
       }
 
-      const updatedAppointment = await this.prisma.lawsuit.update({
+      const updatedAppointment: LawsuitWithFileNames = await this.prisma.lawsuit.update({
         where: {
           id,
         },
