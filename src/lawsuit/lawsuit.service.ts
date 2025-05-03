@@ -176,6 +176,9 @@ export class LawsuitService {
         where: {
           id,
         },
+        include: {
+          fileNames: true,
+        },
         data: {
           ...updateRequest,
           ...(updateRequest.documentEmissionDate && {
