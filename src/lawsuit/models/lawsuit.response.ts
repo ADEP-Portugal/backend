@@ -42,7 +42,7 @@ export class LawsuitResponse {
 
   type: LawsuitType;
 
-  fileNames: FileName[];
+  fileNames: string[];
 
   static fromLawsuitEntity(entity: LawsuitWithFiles, responsible: string): LawsuitResponse {
     const response = new LawsuitResponse();
