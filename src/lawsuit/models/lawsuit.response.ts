@@ -1,5 +1,12 @@
 import type { DocumentType, Lawsuit, LawsuitOrderType, LawsuitStatus, LawsuitType, PaymentStatus, FileName } from '@prisma/client';
 
+type LawsuitWithFiles = Prisma.LawsuitGetPayload<{
+  include: {
+    fileNames: true;
+  };
+}>;
+
+
 export class LawsuitResponse {
   id: string;
 
@@ -37,7 +44,7 @@ export class LawsuitResponse {
 
   fileNames: FileName[];
 
-  static fromLawsuitEntity(entity: Lawsuit, responsible: string): LawsuitResponse {
+  static fromLawsuitEntity(entity: LawsuitWithFiles, responsible: string): LawsuitResponse {
     const response = new LawsuitResponse();
     response.id = entity.id;
     response.client = entity.client;
