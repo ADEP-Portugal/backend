@@ -10,7 +10,7 @@ datasource db {
 model EmailChange {
   token      String   @id @db.Char(21)
   newEmail   String
-  userId  String @db.Char(36)
+  userId  String @unique @db.Char(36)
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   validUntil DateTime @default(dbgenerated("(timezone('utc'::text, now()) + '2 days'::interval)")) @db.Timestamp(6)
 
@@ -19,7 +19,7 @@ model EmailChange {
 
 model PasswordReset {
   token      String   @id @db.Char(21)
-  userId  String @db.Char(36)
+  userId  String @unique @db.Char(36) @unique
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   validUntil DateTime @default(dbgenerated("(timezone('utc'::text, now()) + '2 days'::interval)")) @db.Timestamp(6)
 
@@ -141,6 +141,13 @@ enum LawsuitType {
   NON_ASSOCIATE
 }
 
+model FileName {
+  id        String   @id @default(uuid()) @db.Char(36)
+  name      String
+  lawsuit   Lawsuit  @relation(fields: [lawsuitId], references: [id])
+  lawsuitId String   @db.Char(36)
+}
+
 model Lawsuit {
   id    String   @id @default(uuid()) @db.Char(36)
   client             String
@@ -160,7 +167,7 @@ model Lawsuit {
   responsible     String      @db.Char(36)
   user       User     @relation(fields: [responsible], references: [id], onDelete: Cascade)
   description             String
-  fileNames             String[]
+  fileNames FileName[]
   task             Task[]
   deletedAt DateTime?
   createdAt DateTime @default(dbgenerated("timezone('UTC'::text, now())")) @db.Timestamp(6)
@@ -198,6 +205,13 @@ enum AvailabilityToWork {
   NIGHT
 }
 
+model AreaInterest {
+  id           String     @id @default(uuid()) @db.Char(36)
+  name         String
+  associate    Associate  @relation(fields: [associateId], references: [id], onDelete: Cascade)
+  associateId  String     @db.Char(36)
+}
+
 model Associate {
   id    String   @id @default(uuid()) @db.Char(36)
   fullName             String
@@ -208,10 +222,10 @@ model Associate {
   nationality             Nationality
   educationLevel             EducationLevel
   motherLanguage             String?
-  availabilityToWork             AvailabilityToWork[]
+  availabilityToWork             Json
   address             String
   profissionalExperience             String?
-  areaInterest             String[]
+  areaInterest          AreaInterest[]
   associateNumber             String?
   cardExpirationDate DateTime? @db.Date
   quotaStatus             QuotaStatus
