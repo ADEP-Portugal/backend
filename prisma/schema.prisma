@@ -32,7 +32,7 @@ enum Role {
 }
 
 model User {
-  id String @id @default(uuid()) @db.Uuid
+  id    String   @id @default(uuid()) @db.Char(36)
   email             String             @unique
   passwordHash      String
   fullName         String
@@ -49,7 +49,7 @@ model User {
 }
 
 model Event {
-  id String @id @default(uuid()) @db.Uuid
+  id    String   @id @default(uuid()) @db.Char(36)
   name      String
   date DateTime @db.Date
   time             String
@@ -73,7 +73,7 @@ enum Gender {
 }
 
 model Appointment {
-  id String @id @default(uuid()) @db.Uuid
+  id    String   @id @default(uuid()) @db.Char(36)
   client      String
   reason      String
   date DateTime @db.Date
@@ -142,7 +142,7 @@ enum LawsuitType {
 }
 
 model Lawsuit {
-  id String @id @default(uuid()) @db.Uuid
+  id    String   @id @default(uuid()) @db.Char(36)
   client             String
   birthday             DateTime @db.Date
   phone             String
@@ -199,7 +199,7 @@ enum AvailabilityToWork {
 }
 
 model Associate {
-  id String @id @default(uuid()) @db.Uuid
+  id    String   @id @default(uuid()) @db.Char(36)
   fullName             String
   email             String
   gender             Gender
@@ -241,7 +241,7 @@ enum TaskStatus {
 }
 
 model Task {
-  id String @id @default(uuid()) @db.Uuid
+  id    String   @id @default(uuid()) @db.Char(36)
   title             String
   client             String
   phone             String
@@ -269,7 +269,7 @@ enum UsefulLinkCategory {
 }
 
 model UsefulLink {
-  id String @id @default(uuid()) @db.Uuid
+  id    String   @id @default(uuid()) @db.Char(36)
   title             String
   url             String
   category             UsefulLinkCategory
