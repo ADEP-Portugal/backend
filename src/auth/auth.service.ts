@@ -147,11 +147,14 @@ export class AuthService {
     );
 
     const token = nanoid();
+    const now = new Date();
+    const validUntil = new Date(now.getTime() + 2 * 24 * 60 * 60 * 1000);
 
     const createPasswordReset = this.prisma.passwordReset.create({
       data: {
         userId: user.id,
         token,
+        validUntil,
       },
       select: null,
     });
@@ -266,8 +269,8 @@ export class AuthService {
     });
     res.cookie('auth_token', encrypt(token), {
       httpOnly: true,
-      secure: false,
-      sameSite: 'lax',
+      secure: true,
+      sameSite: 'strict',
       signed: true,
       path: '/',
       maxAge: 1000 * 60 * 60 * 24 * 30, // 1 month

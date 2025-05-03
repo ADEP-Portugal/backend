@@ -11,7 +11,7 @@ model PasswordReset {
   token      String   @id @db.Char(21)
   userId  String @unique @db.Char(36)
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  validUntil DateTime @default(dbgenerated("CURRENT_TIMESTAMP + INTERVAL 2 DAY")) @db.Timestamp(6)
+  validUntil DateTime @db.Timestamp(6)
 
   @@map("password-reset")
 }
