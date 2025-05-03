@@ -10,7 +10,7 @@ datasource db {
 model EmailChange {
   token      String   @id @db.Char(21)
   newEmail   String
-  userId     String      @unique @db.Uuid
+  userId  String @db.Char(36)
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   validUntil DateTime @default(dbgenerated("(timezone('utc'::text, now()) + '2 days'::interval)")) @db.Timestamp(6)
 
@@ -19,7 +19,7 @@ model EmailChange {
 
 model PasswordReset {
   token      String   @id @db.Char(21)
-  userId     String      @unique @db.Uuid
+  userId  String @db.Char(36)
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   validUntil DateTime @default(dbgenerated("(timezone('utc'::text, now()) + '2 days'::interval)")) @db.Timestamp(6)
 
@@ -81,7 +81,7 @@ model Appointment {
   type             AppointmentType
   gender             Gender
   associate  Boolean
-  responsible     String      @db.Uuid
+  responsible     String      @db.Char(36)
   user       User     @relation(fields: [responsible], references: [id], onDelete: Cascade)
   description             String
   deletedAt DateTime?
@@ -157,7 +157,7 @@ model Lawsuit {
   documentExpirationDate             DateTime? @db.Date
   orderDate             DateTime @db.Date
   deadline             DateTime @db.Date
-  responsible     String      @db.Uuid
+  responsible     String      @db.Char(36)
   user       User     @relation(fields: [responsible], references: [id], onDelete: Cascade)
   description             String
   fileNames             String[]
@@ -249,9 +249,9 @@ model Task {
   priority             Priority
   status             TaskStatus @default(TODO)
   description             String
-  responsible     String      @db.Uuid
+  responsible     String      @db.Char(36)
   user       User     @relation(fields: [responsible], references: [id], onDelete: Cascade)
-  lawsuitId     String?      @db.Uuid
+  lawsuitId     String?      @db.Char(36)
   lawsuit       Lawsuit?     @relation(fields: [lawsuitId], references: [id], onDelete: Cascade)
   deletedAt DateTime?
   createdAt DateTime @default(dbgenerated("timezone('UTC'::text, now())")) @db.Timestamp(6)
