@@ -13,6 +13,9 @@ export class LawsuitService {
 
   public async fetchSummary(): Promise<SummaryLawsuitResponse[]> {
     const summaryLawsuits = await this.prisma.lawsuit.findMany({
+      include: {
+        fileNames: true,
+      },
       where: {
         deletedAt: null,
       },
@@ -36,13 +39,13 @@ export class LawsuitService {
             fullName: true,
           },
         },
+        fileNames: true,
       },
       where: {
         deletedAt: null,
         ...(client && {
           client: {
             contains: client,
-            mode: 'insensitive',
           },
         }),
       },
@@ -67,7 +70,6 @@ export class LawsuitService {
       ...(client && {
         client: {
           contains: client,
-          mode: 'insensitive',
         },
       }),
     };
@@ -80,6 +82,7 @@ export class LawsuitService {
             fullName: true,
           },
         },
+        fileNames: true,
       },
       skip: (page - 1) * limit,
       take: limit,
@@ -106,6 +109,7 @@ export class LawsuitService {
               fullName: true,
             },
           },
+          fileNames: true,
         },
         where: {
           id,
@@ -156,6 +160,7 @@ export class LawsuitService {
               fullName: true,
             },
           },
+          fileNames: true,
         },
         where: {
           id,
