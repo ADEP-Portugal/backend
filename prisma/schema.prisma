@@ -135,6 +135,8 @@ model FileName {
   name      String
   lawsuit   Lawsuit  @relation(fields: [lawsuitId], references: [id])
   lawsuitId String   @db.Char(36)
+
+  @@map("file-name")
 }
 
 model Lawsuit {
@@ -199,6 +201,8 @@ model AreaInterest {
   name         String
   associate    Associate  @relation(fields: [associateId], references: [id], onDelete: Cascade)
   associateId  String     @db.Char(36)
+
+  @@map("area-interest")
 }
 
 model Associate {
