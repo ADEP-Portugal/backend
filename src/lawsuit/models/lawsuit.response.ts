@@ -1,4 +1,4 @@
-import type { DocumentType, Lawsuit, LawsuitOrderType, LawsuitStatus, LawsuitType, PaymentStatus, FileName } from '@prisma/client';
+import type { DocumentType, Lawsuit, LawsuitOrderType, LawsuitStatus, LawsuitType, PaymentStatus, FileName, Prisma } from '@prisma/client';
 
 type LawsuitWithFiles = Prisma.LawsuitGetPayload<{
   include: {
