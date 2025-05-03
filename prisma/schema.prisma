@@ -7,16 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model EmailChange {
-  token      String   @id @db.Char(21)
-  newEmail   String
-  userId  String @unique @db.Char(36)
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  validUntil DateTime @default(dbgenerated("(timezone('utc'::text, now()) + '2 days'::interval)")) @db.Timestamp(6)
-
-  @@map("email-change")
-}
-
 model PasswordReset {
   token      String   @id @db.Char(21)
   userId  String @unique @db.Char(36)
@@ -38,7 +28,6 @@ model User {
   fullName         String
   imageUrl             String?
   registrationDate  DateTime           @default(dbgenerated("timezone('UTC'::text, now())")) @db.Timestamp(6)
-  emailChange       EmailChange?
   appointments       Appointment[]
   lawsuit       Lawsuit[]
   task       Task[]
