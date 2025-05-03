@@ -1,4 +1,4 @@
-import type { DocumentType, Lawsuit, LawsuitOrderType, LawsuitStatus, LawsuitType, PaymentStatus } from '@prisma/client';
+import type { DocumentType, Lawsuit, LawsuitOrderType, LawsuitStatus, LawsuitType, PaymentStatus, FileName } from '@prisma/client';
 
 export class LawsuitResponse {
   id: string;
@@ -35,7 +35,7 @@ export class LawsuitResponse {
 
   type: LawsuitType;
 
-  fileNames: string[];
+  fileNames: FileName[];
 
   static fromLawsuitEntity(entity: Lawsuit, responsible: string): LawsuitResponse {
     const response = new LawsuitResponse();
@@ -56,7 +56,7 @@ export class LawsuitResponse {
     response.documentExpirationDate = entity.documentExpirationDate;
     response.paymentStatus = entity.paymentStatus;
     response.type = entity.type;
-    response.fileNames = entity.fileNames;
+    response.fileNames = entity.fileNames.map((fileName) => fileName.name);
     return response;
   }
 }
