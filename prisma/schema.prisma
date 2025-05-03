@@ -27,7 +27,7 @@ model User {
   passwordHash      String
   fullName         String
   imageUrl             String?
-  registrationDate  DateTime           @default(dbgenerated("timezone('UTC'::text, now())")) @db.Timestamp(6)
+  registrationDate  DateTime           @default(now()) @db.Timestamp(6)
   appointments       Appointment[]
   lawsuit       Lawsuit[]
   task       Task[]
@@ -45,7 +45,7 @@ model Event {
   location             String
   description             String
   deletedAt DateTime?
-  createdAt DateTime @default(dbgenerated("timezone('UTC'::text, now())")) @db.Timestamp(6)
+  createdAt DateTime @default(now()) @db.Timestamp(6)
   updatedAt DateTime?
 
   @@map("event")
@@ -74,7 +74,7 @@ model Appointment {
   user       User     @relation(fields: [responsible], references: [id], onDelete: Cascade)
   description             String
   deletedAt DateTime?
-  createdAt DateTime @default(dbgenerated("timezone('UTC'::text, now())")) @db.Timestamp(6)
+  createdAt DateTime @default(now()) @db.Timestamp(6)
   updatedAt DateTime?
 
   @@map("appointment")
@@ -159,7 +159,7 @@ model Lawsuit {
   fileNames FileName[]
   task             Task[]
   deletedAt DateTime?
-  createdAt DateTime @default(dbgenerated("timezone('UTC'::text, now())")) @db.Timestamp(6)
+  createdAt DateTime @default(now()) @db.Timestamp(6)
   updatedAt DateTime?
 
   @@map("lawsuit")
@@ -225,7 +225,7 @@ model Associate {
   employmentStatus             String?
   nif             String?
   deletedAt DateTime?
-  createdAt DateTime @default(dbgenerated("timezone('UTC'::text, now())")) @db.Timestamp(6)
+  createdAt DateTime @default(now()) @db.Timestamp(6)
   updatedAt DateTime?
 
   @@map("associate")
@@ -257,7 +257,7 @@ model Task {
   lawsuitId     String?      @db.Char(36)
   lawsuit       Lawsuit?     @relation(fields: [lawsuitId], references: [id], onDelete: Cascade)
   deletedAt DateTime?
-  createdAt DateTime @default(dbgenerated("timezone('UTC'::text, now())")) @db.Timestamp(6)
+  createdAt DateTime @default(now()) @db.Timestamp(6)
   updatedAt DateTime?
 
   @@map("task")
@@ -278,7 +278,7 @@ model UsefulLink {
   category             UsefulLinkCategory
   description             String?
   deletedAt DateTime?
-  createdAt DateTime @default(dbgenerated("timezone('UTC'::text, now())")) @db.Timestamp(6)
+  createdAt DateTime @default(now()) @db.Timestamp(6)
   updatedAt DateTime?
 
   @@map("useful-link")
