@@ -17,7 +17,6 @@ export class UsefulLinkService {
         ...(title && {
           title: {
             contains: title,
-            mode: 'insensitive',
           },
         }),
       },
@@ -40,7 +39,6 @@ export class UsefulLinkService {
       ...(title && {
         title: {
           contains: title,
-          mode: 'insensitive',
         },
       }),
     };

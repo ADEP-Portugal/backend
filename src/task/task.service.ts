@@ -1,13 +1,32 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../common/services/prisma.service';
 import { TaskResponse, CreateTaskRequest, UpdateTaskRequest } from './models';
+import { Prisma } from '@prisma/client';
+
+type TaskWithUserAndLawsuit = Prisma.TaskGetPayload<{
+  include: {
+    user: {
+      select: {
+        id: true;
+        fullName: true;
+      };
+    };
+    lawsuit: {
+      select: {
+        id: true;
+        client: true;
+        orderType: true;
+      };
+    };
+  };
+}>;
 
 @Injectable()
 export class TaskService {
   constructor(private readonly prisma: PrismaService) {}
 
   public async fetchAll(client?: string): Promise<TaskResponse[]> {
-    const tasks = await this.prisma.task.findMany({
+    const tasks: TaskWithUserAndLawsuit[] = await this.prisma.task.findMany({
       include: {
         user: {
           select: {
@@ -28,7 +47,6 @@ export class TaskService {
         ...(client && {
           client: {
             contains: client,
-            mode: 'insensitive',
           },
         }),
       },
@@ -53,7 +71,6 @@ export class TaskService {
       ...(client && {
         client: {
           contains: client,
-          mode: 'insensitive',
         },
       }),
     };

@@ -62,70 +62,7 @@ export class AuthService {
     //   emailVerificationToken,
     // );
   }
-
-  async sendChangeEmailMail(
-    changeEmailRequest: ChangeEmailRequest,
-    userId: string,
-    name: string,
-    oldEmail: string,
-  ): Promise<void> {
-    const emailAvailable = await this.isEmailAvailable(
-      changeEmailRequest.newEmail,
-    );
-    if (!emailAvailable) {
-      Logger.log(
-        `User with id ${userId} tried to change its email to already used ${changeEmailRequest.newEmail}`,
-      );
-      throw new ConflictException();
-    }
-
-    const deletePrevEmailChangeIfExist = this.prisma.emailChange.deleteMany({
-      where: { userId },
-    });
-
-    const token = nanoid();
-
-    const createEmailChange = this.prisma.emailChange.create({
-      data: {
-        userId,
-        token,
-        newEmail: changeEmailRequest.newEmail,
-      },
-      select: null,
-    });
-
-    await this.prisma.$transaction([
-      deletePrevEmailChangeIfExist,
-      createEmailChange,
-    ]);
-
-    await this.mailSenderService.sendChangeEmailMail(
-      name,
-      oldEmail,
-      token,
-      changeEmailRequest.newEmail,
-    );
-  }
-
-  async changeEmail(token: string): Promise<void> {
-    const emailChange = await this.prisma.emailChange.findUnique({
-      where: { token },
-    });
-
-    if (emailChange !== null && emailChange.validUntil > new Date()) {
-      await this.prisma.user.update({
-        where: { id: emailChange.userId },
-        data: {
-          email: emailChange.newEmail.toLowerCase(),
-        },
-        select: null,
-      });
-    } else {
-      Logger.log(`Invalid email change token ${token} is rejected.`);
-      throw new NotFoundException();
-    }
-  }
-
+  
   async sendResetPasswordMail(email: string): Promise<void> {
     const user = await this.prisma.user.findUnique({
       where: { email: email.toLowerCase() },
@@ -147,11 +84,14 @@ export class AuthService {
     );
 
     const token = nanoid();
+    const now = new Date();
+    const validUntil = new Date(now.getTime() + 2 * 24 * 60 * 60 * 1000);
 
     const createPasswordReset = this.prisma.passwordReset.create({
       data: {
         userId: user.id,
         token,
+        validUntil,
       },
       select: null,
     });

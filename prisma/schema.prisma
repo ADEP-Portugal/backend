@@ -4,25 +4,15 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
-}
-
-model EmailChange {
-  token      String   @id @db.Char(21)
-  newEmail   String
-  userId     String      @unique @db.Uuid
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  validUntil DateTime @default(dbgenerated("(timezone('utc'::text, now()) + '2 days'::interval)")) @db.Timestamp(6)
-
-  @@map("email-change")
 }
 
 model PasswordReset {
   token      String   @id @db.Char(21)
-  userId     String      @unique @db.Uuid
+  userId  String @unique @db.Char(36)
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  validUntil DateTime @default(dbgenerated("(timezone('utc'::text, now()) + '2 days'::interval)")) @db.Timestamp(6)
+  validUntil DateTime @db.Timestamp(6)
 
   @@map("password-reset")
 }
@@ -33,13 +23,12 @@ enum Role {
 }
 
 model User {
-  id String @id @default(uuid()) @db.Uuid
+  id    String   @id @default(uuid()) @db.Char(36)
   email             String             @unique
   passwordHash      String
   fullName         String
   imageUrl             String?
-  registrationDate  DateTime           @default(dbgenerated("timezone('UTC'::text, now())")) @db.Timestamp(6)
-  emailChange       EmailChange?
+  registrationDate  DateTime           @default(now()) @db.Timestamp(6)
   appointments       Appointment[]
   lawsuit       Lawsuit[]
   task       Task[]
@@ -50,14 +39,14 @@ model User {
 }
 
 model Event {
-  id String @id @default(uuid()) @db.Uuid
+  id    String   @id @default(uuid()) @db.Char(36)
   name      String
   date DateTime @db.Date
   time             String
   location             String
   description             String
   deletedAt DateTime?
-  createdAt DateTime @default(dbgenerated("timezone('UTC'::text, now())")) @db.Timestamp(6)
+  createdAt DateTime @default(now()) @db.Timestamp(6)
   updatedAt DateTime?
 
   @@map("event")
@@ -74,19 +63,19 @@ enum Gender {
 }
 
 model Appointment {
-  id String @id @default(uuid()) @db.Uuid
-  client      String
+  id    String   @id @default(uuid()) @db.Char(36)
+  client      String @db.VarChar(255)
   reason      String
   date DateTime @db.Date
   time             String
   type             AppointmentType
   gender             Gender
   associate  Boolean
-  responsible     String      @db.Uuid
+  responsible     String      @db.Char(36)
   user       User     @relation(fields: [responsible], references: [id], onDelete: Cascade)
   description             String
   deletedAt DateTime?
-  createdAt DateTime @default(dbgenerated("timezone('UTC'::text, now())")) @db.Timestamp(6)
+  createdAt DateTime @default(now()) @db.Timestamp(6)
   updatedAt DateTime?
 
   @@map("appointment")
@@ -142,8 +131,17 @@ enum LawsuitType {
   NON_ASSOCIATE
 }
 
+model FileName {
+  id        String   @id @default(uuid()) @db.Char(36)
+  name      String
+  lawsuit   Lawsuit  @relation(fields: [lawsuitId], references: [id])
+  lawsuitId String   @db.Char(36)
+
+  @@map("file-name")
+}
+
 model Lawsuit {
-  id String @id @default(uuid()) @db.Uuid
+  id    String   @id @default(uuid()) @db.Char(36)
   client             String
   birthday             DateTime @db.Date
   phone             String
@@ -158,13 +156,13 @@ model Lawsuit {
   documentExpirationDate             DateTime? @db.Date
   orderDate             DateTime @db.Date
   deadline             DateTime @db.Date
-  responsible     String      @db.Uuid
+  responsible     String      @db.Char(36)
   user       User     @relation(fields: [responsible], references: [id], onDelete: Cascade)
   description             String
-  fileNames             String[]
+  fileNames FileName[]
   task             Task[]
   deletedAt DateTime?
-  createdAt DateTime @default(dbgenerated("timezone('UTC'::text, now())")) @db.Timestamp(6)
+  createdAt DateTime @default(now()) @db.Timestamp(6)
   updatedAt DateTime?
 
   @@map("lawsuit")
@@ -192,8 +190,17 @@ enum AvailabilityToWork {
   NIGHT
 }
 
+model AreaInterest {
+  id           String     @id @default(uuid()) @db.Char(36)
+  name         String
+  associate    Associate  @relation(fields: [associateId], references: [id], onDelete: Cascade)
+  associateId  String     @db.Char(36)
+
+  @@map("area-interest")
+}
+
 model Associate {
-  id String @id @default(uuid()) @db.Uuid
+  id    String   @id @default(uuid()) @db.Char(36)
   fullName             String
   email             String
   gender             Gender
@@ -202,10 +209,10 @@ model Associate {
   nationality             String
   educationLevel             EducationLevel
   motherLanguage             String?
-  availabilityToWork             AvailabilityToWork[]
+  availabilityToWork             Json
   address             String
   profissionalExperience             String?
-  areaInterest             String[]
+  areaInterest          AreaInterest[]
   associateNumber             String?
   cardExpirationDate DateTime? @db.Date
   quotaStatus             QuotaStatus
@@ -216,7 +223,7 @@ model Associate {
   employmentStatus             String?
   nif             String?
   deletedAt DateTime?
-  createdAt DateTime @default(dbgenerated("timezone('UTC'::text, now())")) @db.Timestamp(6)
+  createdAt DateTime @default(now()) @db.Timestamp(6)
   updatedAt DateTime?
 
   @@map("associate")
@@ -235,7 +242,7 @@ enum TaskStatus {
 }
 
 model Task {
-  id String @id @default(uuid()) @db.Uuid
+  id    String   @id @default(uuid()) @db.Char(36)
   title             String
   client             String
   phone             String
@@ -243,12 +250,12 @@ model Task {
   priority             Priority
   status             TaskStatus @default(TODO)
   description             String
-  responsible     String      @db.Uuid
+  responsible     String      @db.Char(36)
   user       User     @relation(fields: [responsible], references: [id], onDelete: Cascade)
-  lawsuitId     String?      @db.Uuid
+  lawsuitId     String?      @db.Char(36)
   lawsuit       Lawsuit?     @relation(fields: [lawsuitId], references: [id], onDelete: Cascade)
   deletedAt DateTime?
-  createdAt DateTime @default(dbgenerated("timezone('UTC'::text, now())")) @db.Timestamp(6)
+  createdAt DateTime @default(now()) @db.Timestamp(6)
   updatedAt DateTime?
 
   @@map("task")
@@ -263,13 +270,13 @@ enum UsefulLinkCategory {
 }
 
 model UsefulLink {
-  id String @id @default(uuid()) @db.Uuid
+  id    String   @id @default(uuid()) @db.Char(36)
   title             String
   url             String
   category             UsefulLinkCategory
   description             String?
   deletedAt DateTime?
-  createdAt DateTime @default(dbgenerated("timezone('UTC'::text, now())")) @db.Timestamp(6)
+  createdAt DateTime @default(now()) @db.Timestamp(6)
   updatedAt DateTime?
 
   @@map("useful-link")

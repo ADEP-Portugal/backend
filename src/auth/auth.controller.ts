@@ -74,27 +74,6 @@ export class AuthController {
     return await this.authService.getUserFromToken(decrypt(accessToken));
   }
 
-  @ApiBearerAuth()
-  @Post('change-email')
-  @HttpCode(HttpStatus.OK)
-  async sendChangeEmailMail(
-    @Usr() user: JwtPayload,
-    @Body() changeEmailRequest: ChangeEmailRequest,
-  ): Promise<void> {
-    await this.authService.sendChangeEmailMail(
-      changeEmailRequest,
-      user.id,
-      user.fullName,
-      user.email,
-    );
-  }
-
-  @Get('change-email')
-  @HttpCode(HttpStatus.OK)
-  async changeEmail(@Query('token') token: string): Promise<void> {
-    await this.authService.changeEmail(token);
-  }
-
   @Post('forgot-password/:email')
   @HttpCode(HttpStatus.OK)
   async sendResetPassword(@Param('email') email: string): Promise<void> {

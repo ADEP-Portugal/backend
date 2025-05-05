@@ -6,6 +6,13 @@ import {
   UpdateLawsuitRequest,
 } from './models';
 import { SummaryLawsuitResponse } from './models/summary-lawsuit.response';
+import { Prisma } from '@prisma/client';
+
+type LawsuitWithFileNames = Prisma.LawsuitGetPayload<{
+  include: {
+    fileNames: true
+  };
+}>;
 
 @Injectable()
 export class LawsuitService {
@@ -13,6 +20,9 @@ export class LawsuitService {
 
   public async fetchSummary(): Promise<SummaryLawsuitResponse[]> {
     const summaryLawsuits = await this.prisma.lawsuit.findMany({
+      include: {
+        fileNames: true,
+      },
       where: {
         deletedAt: null,
       },
@@ -36,13 +46,13 @@ export class LawsuitService {
             fullName: true,
           },
         },
+        fileNames: true,
       },
       where: {
         deletedAt: null,
         ...(client && {
           client: {
             contains: client,
-            mode: 'insensitive',
           },
         }),
       },
@@ -67,7 +77,6 @@ export class LawsuitService {
       ...(client && {
         client: {
           contains: client,
-          mode: 'insensitive',
         },
       }),
     };
@@ -80,6 +89,7 @@ export class LawsuitService {
             fullName: true,
           },
         },
+        fileNames: true,
       },
       skip: (page - 1) * limit,
       take: limit,
@@ -106,6 +116,7 @@ export class LawsuitService {
               fullName: true,
             },
           },
+          fileNames: true,
         },
         where: {
           id,
@@ -156,6 +167,7 @@ export class LawsuitService {
               fullName: true,
             },
           },
+          fileNames: true,
         },
         where: {
           id,
@@ -167,9 +179,12 @@ export class LawsuitService {
         throw new NotFoundException();
       }
 
-      const updatedAppointment = await this.prisma.lawsuit.update({
+      const updatedAppointment: LawsuitWithFileNames = await this.prisma.lawsuit.update({
         where: {
           id,
+        },
+        include: {
+          fileNames: true,
         },
         data: {
           ...updateRequest,
