@@ -28,7 +28,7 @@ export class LawsuitController {
 
   @ApiBearerAuth()
   @Get()
-  @UseGuards(AuthCookieGuardion)
+  
   @HttpCode(HttpStatus.OK)
   async fetchAll(
     @Query('page') page?: number,
@@ -43,7 +43,7 @@ export class LawsuitController {
 
   @ApiBearerAuth()
   @Get('summary')
-  @UseGuards(AuthCookieGuardion)
+  
   @HttpCode(HttpStatus.OK)
   async fetchSummary(): Promise<SummaryLawsuitResponse[]> {
     return this.lawsuitService.fetchSummary();
@@ -51,7 +51,7 @@ export class LawsuitController {
 
   @ApiBearerAuth()
   @Get(':id')
-  @UseGuards(AuthCookieGuardion)
+  
   @HttpCode(HttpStatus.OK)
   async fetchById(@Param('id') id: string): Promise<LawsuitResponse> {
     return this.lawsuitService.fetchById(id);
@@ -59,7 +59,7 @@ export class LawsuitController {
 
   @ApiBearerAuth()
   @Post()
-  @UseGuards(AuthCookieGuardion)
+  
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() createRequest: CreateLawsuitRequest): Promise<void> {
     return await this.lawsuitService.create(createRequest);
@@ -67,7 +67,7 @@ export class LawsuitController {
 
   @ApiBearerAuth()
   @Put(':id')
-  @UseGuards(AuthCookieGuardion)
+  
   @HttpCode(HttpStatus.OK)
   async update(
     @Param('id') id: string,
@@ -78,7 +78,7 @@ export class LawsuitController {
 
   @ApiBearerAuth()
   @Delete(':id')
-  @UseGuards(AuthCookieGuardion)
+  
   @HttpCode(HttpStatus.OK)
   async delete(@Param('id') id: string): Promise<void> {
     return this.lawsuitService.delete(id);

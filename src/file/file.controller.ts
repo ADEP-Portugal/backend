@@ -40,7 +40,7 @@ export class FileController {
       }),
     }),
   )
-  @UseGuards(AuthCookieGuardion)
+  
   @HttpCode(HttpStatus.CREATED)
   async uploadFiles(@UploadedFiles() files: Express.Multer.File[]) {
     for (const file of files) {
@@ -55,7 +55,7 @@ export class FileController {
   }
 
   @Get('download/:filename')
-  @UseGuards(AuthCookieGuardion)
+  
   async downloadFile(
     @Param('filename') filename: string,
     @Res() res: Response,
