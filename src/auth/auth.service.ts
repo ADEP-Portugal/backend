@@ -266,8 +266,8 @@ export class AuthService {
     });
     res.cookie('auth_token', encrypt(token), {
       httpOnly: true,
-      secure: false,
-      sameSite: 'lax',
+      secure: true,
+      sameSite: 'none',
       signed: true,
       path: '/',
       maxAge: 1000 * 60 * 60 * 24 * 30, // 1 month

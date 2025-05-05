@@ -1,5 +1,6 @@
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
 }
 
 datasource db {
@@ -169,13 +170,6 @@ model Lawsuit {
   @@map("lawsuit")
 }
 
-enum Nationality {
-  BRAZILIAN
-  MOZAMBICAN
-  PORTUGUESE
-  OTHER
-}
-
 enum EducationLevel {
   PRIMARY
   SECONDARY
@@ -205,7 +199,7 @@ model Associate {
   gender             Gender
   phone             String
   birthday             DateTime @db.Date
-  nationality             Nationality
+  nationality             String
   educationLevel             EducationLevel
   motherLanguage             String?
   availabilityToWork             AvailabilityToWork[]

@@ -22,8 +22,10 @@ async function bootstrap() {
 
   app.use(helmet());
 
+  const allowedOrigins = ['http://localhost:5173', 'https://admin.associacaoadip.com'];
+
   app.enableCors({
-    origin: 'http://localhost:5173',
+    origin: allowedOrigins,
     credentials: true,
   });
 
