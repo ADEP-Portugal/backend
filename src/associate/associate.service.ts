@@ -1,5 +1,5 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '../common/services/prisma.service';
+import { prisma } from '../common/services/prisma.service';
 import { AssociateResponse, UpdateAssociateRequest } from './models';
 import { CreateAssociateRequest } from './models/request/create-associate-request';
 import { SummaryAssociateResponse } from './models/summary-associate.response';
@@ -10,8 +10,6 @@ import { ExpirationDateAssociateResponse } from './models/expiration-date-associ
 
 @Injectable()
 export class AssociateService {
-  constructor(private readonly prisma: PrismaService) {}
-
   public async fetchExpirationDate(): Promise<
     ExpirationDateAssociateResponse[]
   > {
@@ -26,7 +24,7 @@ export class AssociateService {
       today.getMonth() + 1,
       today.getDate(),
     );
-    const expirationDateAssociates = await this.prisma.associate.findMany({
+    const expirationDateAssociates = await prisma.associate.findMany({
       where: {
         deletedAt: null,
         documentExpirationDate: {
@@ -48,7 +46,7 @@ export class AssociateService {
   }
 
   public async fetchSummary(): Promise<SummaryAssociateResponse[]> {
-    const summaryAssociates = await this.prisma.associate.findMany({
+    const summaryAssociates = await prisma.associate.findMany({
       where: {
         deletedAt: null,
       },
@@ -105,7 +103,7 @@ export class AssociateService {
       params.push(month);
       query += ` AND EXTRACT(MONTH FROM "birthday") = $${params.length}`;
     }
-    const associates: Array<Associate> = await this.prisma.$queryRawUnsafe(
+    const associates: Array<Associate> = await prisma.$queryRawUnsafe(
       query,
       ...params,
     );
@@ -188,13 +186,13 @@ export class AssociateService {
         },
       }),
     };
-    const associates = await this.prisma.associate.findMany({
+    const associates = await prisma.associate.findMany({
       where: whereClause,
       skip: (page - 1) * limit,
       take: limit,
     });
     return {
-      total: await this.prisma.associate.count({
+      total: await prisma.associate.count({
         where: whereClause,
       }),
       page,
@@ -207,7 +205,7 @@ export class AssociateService {
 
   public async fetchById(id: string): Promise<AssociateResponse> {
     try {
-      const event = await this.prisma.associate.findUnique({
+      const event = await prisma.associate.findUnique({
         where: {
           id,
           deletedAt: null,
@@ -226,7 +224,7 @@ export class AssociateService {
   }
 
   public async create(createRequest: CreateAssociateRequest): Promise<void> {
-    await this.prisma.associate.create({
+    await prisma.associate.create({
       data: {
         ...createRequest,
         cardExpirationDate:
@@ -247,7 +245,7 @@ export class AssociateService {
     updateRequest: UpdateAssociateRequest,
   ): Promise<AssociateResponse> {
     try {
-      const event = await this.prisma.associate.findUnique({
+      const event = await prisma.associate.findUnique({
         where: {
           id,
           deletedAt: null,
@@ -258,7 +256,7 @@ export class AssociateService {
         throw new NotFoundException();
       }
 
-      const updatedEvent = await this.prisma.associate.update({
+      const updatedEvent = await prisma.associate.update({
         where: {
           id,
         },
@@ -286,7 +284,7 @@ export class AssociateService {
 
   public async delete(id: string): Promise<void> {
     try {
-      const event = await this.prisma.associate.findUnique({
+      const event = await prisma.associate.findUnique({
         where: {
           id,
           deletedAt: null,
@@ -297,7 +295,7 @@ export class AssociateService {
         throw new NotFoundException();
       }
 
-      await this.prisma.associate.update({
+      await prisma.associate.update({
         where: {
           id,
         },

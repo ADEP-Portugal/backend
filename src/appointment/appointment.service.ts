@@ -1,5 +1,5 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '../common/services/prisma.service';
+import { prisma } from '../common/services/prisma.service';
 import { getCurrentMonthRange, getCurrentWeekRange } from 'src/utils/date.util';
 import {
   AppointmentResponse,
@@ -11,8 +11,6 @@ import { AppointmentType } from '@prisma/client';
 
 @Injectable()
 export class AppointmentService {
-  constructor(private readonly prisma: PrismaService) {}
-
   public async fetchAll(
     client?: string,
     period?: PeriodFilter,
@@ -43,7 +41,7 @@ export class AppointmentService {
           break;
       }
     }
-    const appointments = await this.prisma.appointment.findMany({
+    const appointments = await prisma.appointment.findMany({
       include: {
         user: {
           select: {
@@ -132,7 +130,7 @@ export class AppointmentService {
         },
       }),
     };
-    const appointments = await this.prisma.appointment.findMany({
+    const appointments = await prisma.appointment.findMany({
       where: whereClause,
       include: {
         user: {
@@ -149,7 +147,7 @@ export class AppointmentService {
       },
     });
     return {
-      total: await this.prisma.appointment.count({
+      total: await prisma.appointment.count({
         where: whereClause,
       }),
       page,
@@ -166,7 +164,7 @@ export class AppointmentService {
 
   public async fetchById(id: string): Promise<AppointmentResponse> {
     try {
-      const appointment = await this.prisma.appointment.findUnique({
+      const appointment = await prisma.appointment.findUnique({
         include: {
           user: {
             select: {
@@ -197,7 +195,7 @@ export class AppointmentService {
   }
 
   public async create(createRequest: CreateAppointmentRequest): Promise<void> {
-    await this.prisma.appointment.create({
+    await prisma.appointment.create({
       data: {
         ...createRequest,
         date: new Date(createRequest.date),
@@ -211,7 +209,7 @@ export class AppointmentService {
     updateRequest: UpdateAppointmentRequest,
   ): Promise<AppointmentResponse> {
     try {
-      const appointment = await this.prisma.appointment.findUnique({
+      const appointment = await prisma.appointment.findUnique({
         include: {
           user: {
             select: {
@@ -230,7 +228,7 @@ export class AppointmentService {
         throw new NotFoundException();
       }
 
-      const updatedAppointment = await this.prisma.appointment.update({
+      const updatedAppointment = await prisma.appointment.update({
         where: {
           id,
         },
@@ -255,7 +253,7 @@ export class AppointmentService {
 
   public async delete(id: string): Promise<void> {
     try {
-      const appointment = await this.prisma.appointment.findUnique({
+      const appointment = await prisma.appointment.findUnique({
         where: {
           id,
           deletedAt: null,
@@ -266,7 +264,7 @@ export class AppointmentService {
         throw new NotFoundException();
       }
 
-      await this.prisma.appointment.update({
+      await prisma.appointment.update({
         where: {
           id,
         },

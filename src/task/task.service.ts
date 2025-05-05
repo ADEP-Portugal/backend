@@ -1,13 +1,11 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '../common/services/prisma.service';
+import { prisma } from '../common/services/prisma.service';
 import { TaskResponse, CreateTaskRequest, UpdateTaskRequest } from './models';
 
 @Injectable()
 export class TaskService {
-  constructor(private readonly prisma: PrismaService) {}
-
   public async fetchAll(client?: string): Promise<TaskResponse[]> {
-    const tasks = await this.prisma.task.findMany({
+    const tasks = await prisma.task.findMany({
       include: {
         user: {
           select: {
@@ -57,7 +55,7 @@ export class TaskService {
         },
       }),
     };
-    const tasks = await this.prisma.task.findMany({
+    const tasks = await prisma.task.findMany({
       where: whereClause,
       include: {
         user: {
@@ -78,7 +76,7 @@ export class TaskService {
       take: limit,
     });
     return {
-      total: await this.prisma.task.count({
+      total: await prisma.task.count({
         where: whereClause,
       }),
       page,
@@ -91,7 +89,7 @@ export class TaskService {
 
   public async fetchById(id: string): Promise<TaskResponse> {
     try {
-      const task = await this.prisma.task.findUnique({
+      const task = await prisma.task.findUnique({
         include: {
           user: {
             select: {
@@ -129,7 +127,7 @@ export class TaskService {
   }
 
   public async create(createRequest: CreateTaskRequest): Promise<void> {
-    await this.prisma.task.create({
+    await prisma.task.create({
       data: {
         ...createRequest,
         deadline: new Date(createRequest.deadline),
@@ -142,7 +140,7 @@ export class TaskService {
     updateRequest: UpdateTaskRequest,
   ): Promise<TaskResponse> {
     try {
-      const task = await this.prisma.task.findUnique({
+      const task = await prisma.task.findUnique({
         include: {
           user: {
             select: {
@@ -168,7 +166,7 @@ export class TaskService {
         throw new NotFoundException();
       }
 
-      const updatedAppointment = await this.prisma.task.update({
+      const updatedAppointment = await prisma.task.update({
         where: {
           id,
         },
@@ -191,7 +189,7 @@ export class TaskService {
 
   public async delete(id: string): Promise<void> {
     try {
-      const task = await this.prisma.task.findUnique({
+      const task = await prisma.task.findUnique({
         where: {
           id,
           deletedAt: null,
@@ -202,7 +200,7 @@ export class TaskService {
         throw new NotFoundException();
       }
 
-      await this.prisma.task.update({
+      await prisma.task.update({
         where: {
           id,
         },

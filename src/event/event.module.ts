@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { PassportModule } from '@nestjs/passport';
-import { PrismaService } from '../common/services/prisma.service';
 import { EventService } from './event.service';
 import { EventController } from './event.controller';
 import { JwtModule } from '@nestjs/jwt';
@@ -16,7 +15,7 @@ import config from 'src/config';
       },
     }),
   ],
-  providers: [EventService, PrismaService],
+  providers: [EventService],
   exports: [EventService],
   controllers: [EventController],
 })

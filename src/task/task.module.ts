@@ -1,8 +1,7 @@
 import { Module } from '@nestjs/common';
 import { PassportModule } from '@nestjs/passport';
-import { PrismaService } from '../common/services/prisma.service';
-import { TaskController } from './task.controller';
 import { TaskService } from './task.service';
+import { TaskController } from './task.controller';
 import { JwtModule } from '@nestjs/jwt';
 import config from 'src/config';
 
@@ -16,7 +15,7 @@ import config from 'src/config';
       },
     }),
   ],
-  providers: [TaskService, PrismaService],
+  providers: [TaskService],
   exports: [TaskService],
   controllers: [TaskController],
 })

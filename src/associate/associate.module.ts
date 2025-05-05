@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { PassportModule } from '@nestjs/passport';
-import { PrismaService } from '../common/services/prisma.service';
 import { AssociateService } from './associate.service';
 import { AssociateController } from './associate.controller';
 import { JwtModule } from '@nestjs/jwt';
@@ -16,7 +15,7 @@ import config from 'src/config';
       },
     }),
   ],
-  providers: [AssociateService, PrismaService],
+  providers: [AssociateService],
   exports: [AssociateService],
   controllers: [AssociateController],
 })

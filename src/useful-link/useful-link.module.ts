@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { PassportModule } from '@nestjs/passport';
-import { PrismaService } from '../common/services/prisma.service';
 import { UsefulLinkService } from './useful-link.service';
 import { UsefulLinkController } from './useful-link.controller';
 import { JwtModule } from '@nestjs/jwt';
@@ -16,7 +15,7 @@ import config from 'src/config';
       },
     }),
   ],
-  providers: [UsefulLinkService, PrismaService],
+  providers: [UsefulLinkService],
   exports: [UsefulLinkService],
   controllers: [UsefulLinkController],
 })

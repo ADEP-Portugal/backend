@@ -1,5 +1,5 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '../common/services/prisma.service';
+import { prisma } from '../common/services/prisma.service';
 import {
   LawsuitResponse,
   CreateLawsuitRequest,
@@ -9,10 +9,8 @@ import { SummaryLawsuitResponse } from './models/summary-lawsuit.response';
 
 @Injectable()
 export class LawsuitService {
-  constructor(private readonly prisma: PrismaService) {}
-
   public async fetchSummary(): Promise<SummaryLawsuitResponse[]> {
-    const summaryLawsuits = await this.prisma.lawsuit.findMany({
+    const summaryLawsuits = await prisma.lawsuit.findMany({
       where: {
         deletedAt: null,
       },
@@ -28,7 +26,7 @@ export class LawsuitService {
   }
 
   public async fetchAll(client?: string): Promise<LawsuitResponse[]> {
-    const lawsuits = await this.prisma.lawsuit.findMany({
+    const lawsuits = await prisma.lawsuit.findMany({
       include: {
         user: {
           select: {
@@ -71,7 +69,7 @@ export class LawsuitService {
         },
       }),
     };
-    const lawsuits = await this.prisma.lawsuit.findMany({
+    const lawsuits = await prisma.lawsuit.findMany({
       where: whereClause,
       include: {
         user: {
@@ -85,7 +83,7 @@ export class LawsuitService {
       take: limit,
     });
     return {
-      total: await this.prisma.lawsuit.count({
+      total: await prisma.lawsuit.count({
         where: whereClause,
       }),
       page,
@@ -98,7 +96,7 @@ export class LawsuitService {
 
   public async fetchById(id: string): Promise<LawsuitResponse> {
     try {
-      const lawsuit = await this.prisma.lawsuit.findUnique({
+      const lawsuit = await prisma.lawsuit.findUnique({
         include: {
           user: {
             select: {
@@ -125,7 +123,7 @@ export class LawsuitService {
   }
 
   public async create(createRequest: CreateLawsuitRequest): Promise<void> {
-    await this.prisma.lawsuit.create({
+    await prisma.lawsuit.create({
       data: {
         ...createRequest,
         ...(createRequest.documentEmissionDate && {
@@ -148,7 +146,7 @@ export class LawsuitService {
     updateRequest: UpdateLawsuitRequest,
   ): Promise<LawsuitResponse> {
     try {
-      const appointment = await this.prisma.lawsuit.findUnique({
+      const appointment = await prisma.lawsuit.findUnique({
         include: {
           user: {
             select: {
@@ -167,7 +165,7 @@ export class LawsuitService {
         throw new NotFoundException();
       }
 
-      const updatedAppointment = await this.prisma.lawsuit.update({
+      const updatedAppointment = await prisma.lawsuit.update({
         where: {
           id,
         },
@@ -199,7 +197,7 @@ export class LawsuitService {
 
   public async delete(id: string): Promise<void> {
     try {
-      const lawsuit = await this.prisma.lawsuit.findUnique({
+      const lawsuit = await prisma.lawsuit.findUnique({
         where: {
           id,
           deletedAt: null,
@@ -210,7 +208,7 @@ export class LawsuitService {
         throw new NotFoundException();
       }
 
-      await this.prisma.lawsuit.update({
+      await prisma.lawsuit.update({
         where: {
           id,
         },

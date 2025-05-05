@@ -5,7 +5,6 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { MailSenderService } from '../mail-sender/mail-sender.service';
 import { UserService } from '../user/user.service';
-import { PrismaService } from '../common/services/prisma.service';
 import config from '../config';
 
 describe('Auth Controller', () => {
@@ -24,7 +23,7 @@ describe('Auth Controller', () => {
         }),
         PassportModule.register({ defaultStrategy: 'jwt' }),
       ],
-      providers: [AuthService, MailSenderService, UserService, PrismaService],
+      providers: [AuthService, MailSenderService, UserService],
     }).compile();
 
     controller = module.get<AuthController>(AuthController);

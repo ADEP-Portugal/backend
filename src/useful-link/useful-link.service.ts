@@ -1,17 +1,15 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '../common/services/prisma.service';
+import { prisma } from '../common/services/prisma.service';
 import { CreateUsefulLinkRequest } from './models/request/create-useful-link-request';
 import { UpdateUsefulLinkRequest } from './models/request/update-useful-link-request';
 import { UsefulLinkResponse } from './models/useful-link.response';
 
 @Injectable()
 export class UsefulLinkService {
-  constructor(private readonly prisma: PrismaService) {}
-
   public async fetchAll(
     title?: string,
   ): Promise<UsefulLinkResponse[]> {
-    const usefulLinks = await this.prisma.usefulLink.findMany({
+    const usefulLinks = await prisma.usefulLink.findMany({
       where: {
         deletedAt: null,
         ...(title && {
@@ -44,13 +42,13 @@ export class UsefulLinkService {
         },
       }),
     };
-    const usefulLinks = await this.prisma.usefulLink.findMany({
+    const usefulLinks = await prisma.usefulLink.findMany({
       where: whereClause,
       skip: (page - 1) * limit,
       take: limit,
     });
     return {
-      total: await this.prisma.usefulLink.count({
+      total: await prisma.usefulLink.count({
         where: whereClause,
       }),
       page,
@@ -61,7 +59,7 @@ export class UsefulLinkService {
 
   public async fetchById(id: string): Promise<UsefulLinkResponse> {
     try {
-      const usefulLink = await this.prisma.usefulLink.findUnique({
+      const usefulLink = await prisma.usefulLink.findUnique({
         where: {
           id,
           deletedAt: null,
@@ -80,7 +78,7 @@ export class UsefulLinkService {
   }
 
   public async create(createRequest: CreateUsefulLinkRequest): Promise<void> {
-    await this.prisma.usefulLink.create({
+    await prisma.usefulLink.create({
       data: createRequest,
     });
   }
@@ -90,7 +88,7 @@ export class UsefulLinkService {
     updateRequest: UpdateUsefulLinkRequest,
   ): Promise<UsefulLinkResponse> {
     try {
-      const event = await this.prisma.usefulLink.findUnique({
+      const event = await prisma.usefulLink.findUnique({
         where: {
           id,
           deletedAt: null,
@@ -101,7 +99,7 @@ export class UsefulLinkService {
         throw new NotFoundException();
       }
 
-      const updatedEvent = await this.prisma.usefulLink.update({
+      const updatedEvent = await prisma.usefulLink.update({
         where: {
           id,
         },
@@ -117,7 +115,7 @@ export class UsefulLinkService {
 
   public async delete(id: string): Promise<void> {
     try {
-      const event = await this.prisma.usefulLink.findUnique({
+      const event = await prisma.usefulLink.findUnique({
         where: {
           id,
           deletedAt: null,
@@ -128,7 +126,7 @@ export class UsefulLinkService {
         throw new NotFoundException();
       }
 
-      await this.prisma.usefulLink.update({
+      await prisma.usefulLink.update({
         where: {
           id,
         },

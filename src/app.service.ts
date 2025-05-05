@@ -1,12 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from './common/services/prisma.service';
+import { prisma } from './common/services/prisma.service';
 import { PeriodFilter } from './types/period-filter';
 import { getCurrentWeekRange, getCurrentMonthRange } from './utils/date.util';
 
 @Injectable()
 export class AppService {
-  constructor(private readonly prisma: PrismaService) {}
-
   public async filterByDate(date: Date): Promise<{
     appointmentCount: number;
     taskCount: number;
@@ -70,7 +68,7 @@ export class AppService {
   }
 
   public async generateReport(gte: Date | undefined, lte: Date | undefined) {
-    const appointmentCount = await this.prisma.appointment.count({
+    const appointmentCount = await prisma.appointment.count({
       where: {
         deletedAt: null,
         createdAt: {
@@ -79,7 +77,7 @@ export class AppService {
         },
       },
     });
-    const taskCount = await this.prisma.task.count({
+    const taskCount = await prisma.task.count({
       where: {
         deletedAt: null,
         createdAt: {
@@ -88,7 +86,7 @@ export class AppService {
         },
       },
     });
-    const eventCount = await this.prisma.event.count({
+    const eventCount = await prisma.event.count({
       where: {
         deletedAt: null,
         createdAt: {
@@ -97,7 +95,7 @@ export class AppService {
         },
       },
     });
-    const associateCount = await this.prisma.associate.count({
+    const associateCount = await prisma.associate.count({
       where: {
         deletedAt: null,
         createdAt: {
@@ -106,7 +104,7 @@ export class AppService {
         },
       },
     });
-    const lawsuitCount = await this.prisma.lawsuit.count({
+    const lawsuitCount = await prisma.lawsuit.count({
       where: {
         deletedAt: null,
         createdAt: {

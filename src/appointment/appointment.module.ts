@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { PassportModule } from '@nestjs/passport';
-import { PrismaService } from '../common/services/prisma.service';
 import { AppointmentService } from './appointment.service';
 import { AppointmentController } from './appointment.controller';
 import { JwtModule } from '@nestjs/jwt';
@@ -16,7 +15,7 @@ import config from 'src/config';
       },
     }),
   ],
-  providers: [AppointmentService, PrismaService],
+  providers: [AppointmentService],
   exports: [AppointmentService],
   controllers: [AppointmentController],
 })

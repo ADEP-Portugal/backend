@@ -21,7 +21,7 @@ import {
   SignupRequest,
 } from './models';
 import { AuthUser } from './auth-user';
-import { PrismaService } from '../common/services/prisma.service';
+import { prisma } from '../common/services/prisma.service';
 import { Response } from 'express';
 import { UserResponse } from 'src/user/models';
 import { encrypt } from 'src/utils/crypto.util';
@@ -29,17 +29,14 @@ import { encrypt } from 'src/utils/crypto.util';
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly prisma: PrismaService,
     private readonly userService: UserService,
     private readonly jwtService: JwtService,
     private readonly mailSenderService: MailSenderService,
   ) {}
 
   async signup(signupRequest: SignupRequest): Promise<void> {
-    // const emailVerificationToken = nanoid();
-
     try {
-      await this.prisma.user.create({
+      await prisma.user.create({
         data: {
           email: signupRequest.email.toLowerCase(),
           passwordHash: await bcrypt.hash(signupRequest.password, 10),
@@ -54,13 +51,6 @@ export class AuthService {
         } else throw e;
       } else throw e;
     }
-
-    // Implement email verification logic here if needed
-    // await this.mailSenderService.sendVerifyEmailMail(
-    //   signupRequest.fullName,
-    //   signupRequest.email,
-    //   emailVerificationToken,
-    // );
   }
 
   async sendChangeEmailMail(
@@ -79,13 +69,13 @@ export class AuthService {
       throw new ConflictException();
     }
 
-    const deletePrevEmailChangeIfExist = this.prisma.emailChange.deleteMany({
+    const deletePrevEmailChangeIfExist = prisma.emailChange.deleteMany({
       where: { userId },
     });
 
     const token = nanoid();
 
-    const createEmailChange = this.prisma.emailChange.create({
+    const createEmailChange = prisma.emailChange.create({
       data: {
         userId,
         token,
@@ -94,7 +84,7 @@ export class AuthService {
       select: null,
     });
 
-    await this.prisma.$transaction([
+    await prisma.$transaction([
       deletePrevEmailChangeIfExist,
       createEmailChange,
     ]);
@@ -108,12 +98,12 @@ export class AuthService {
   }
 
   async changeEmail(token: string): Promise<void> {
-    const emailChange = await this.prisma.emailChange.findUnique({
+    const emailChange = await prisma.emailChange.findUnique({
       where: { token },
     });
 
     if (emailChange !== null && emailChange.validUntil > new Date()) {
-      await this.prisma.user.update({
+      await prisma.user.update({
         where: { id: emailChange.userId },
         data: {
           email: emailChange.newEmail.toLowerCase(),
@@ -127,7 +117,7 @@ export class AuthService {
   }
 
   async sendResetPasswordMail(email: string): Promise<void> {
-    const user = await this.prisma.user.findUnique({
+    const user = await prisma.user.findUnique({
       where: { email: email.toLowerCase() },
       select: {
         id: true,
@@ -140,15 +130,13 @@ export class AuthService {
       return; // Do not reveal if the email is registered or not
     }
 
-    const deletePrevPasswordResetIfExist = this.prisma.passwordReset.deleteMany(
-      {
-        where: { userId: user.id },
-      },
-    );
+    const deletePrevPasswordResetIfExist = prisma.passwordReset.deleteMany({
+      where: { userId: user.id },
+    });
 
     const token = nanoid();
 
-    const createPasswordReset = this.prisma.passwordReset.create({
+    const createPasswordReset = prisma.passwordReset.create({
       data: {
         userId: user.id,
         token,
@@ -156,7 +144,7 @@ export class AuthService {
       select: null,
     });
 
-    await this.prisma.$transaction([
+    await prisma.$transaction([
       deletePrevPasswordResetIfExist,
       createPasswordReset,
     ]);
@@ -171,12 +159,12 @@ export class AuthService {
   async resetPassword(
     resetPasswordRequest: ResetPasswordRequest,
   ): Promise<void> {
-    const passwordReset = await this.prisma.passwordReset.findUnique({
+    const passwordReset = await prisma.passwordReset.findUnique({
       where: { token: resetPasswordRequest.token },
     });
 
     if (passwordReset !== null && passwordReset.validUntil > new Date()) {
-      await this.prisma.user.update({
+      await prisma.user.update({
         where: { id: passwordReset.userId },
         data: {
           passwordHash: await bcrypt.hash(resetPasswordRequest.newPassword, 10),
@@ -197,7 +185,7 @@ export class AuthService {
     name: string,
     email: string,
   ): Promise<void> {
-    await this.prisma.user.update({
+    await prisma.user.update({
       where: {
         id: userId,
       },
@@ -211,7 +199,7 @@ export class AuthService {
   }
 
   async validateUser(payload: JwtPayload): Promise<AuthUser> {
-    const user = await this.prisma.user.findUnique({
+    const user = await prisma.user.findUnique({
       where: { id: payload.id },
     });
 
@@ -223,7 +211,7 @@ export class AuthService {
 
   async login(loginRequest: LoginRequest): Promise<UserResponse> {
     const normalizedIdentifier = loginRequest.email.toLowerCase();
-    const user = await this.prisma.user.findFirst({
+    const user = await prisma.user.findFirst({
       where: {
         OR: [
           {
@@ -253,7 +241,7 @@ export class AuthService {
   }
 
   async isEmailAvailable(email: string): Promise<boolean> {
-    const user = await this.prisma.user.findUnique({
+    const user = await prisma.user.findUnique({
       where: { email: email.toLowerCase() },
       select: { email: true },
     });
@@ -277,7 +265,7 @@ export class AuthService {
   async getUserFromToken(token: string): Promise<UserResponse> {
     try {
       const payload: JwtPayload = this.jwtService.verify(token);
-      const user = await this.prisma.user.findFirst({
+      const user = await prisma.user.findFirst({
         where: { id: payload.id },
         select: {
           id: true,

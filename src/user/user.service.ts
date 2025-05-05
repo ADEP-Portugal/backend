@@ -1,5 +1,5 @@
 import { ConflictException, Injectable, Logger } from '@nestjs/common';
-import { PrismaService } from '../common/services/prisma.service';
+import { prisma } from '../common/services/prisma.service';
 import { AuthUser } from '../auth/auth-user';
 import { UpdateUserRequest, UserResponse } from './models';
 import { AppointmentResponse } from 'src/appointment/models';
@@ -7,16 +7,14 @@ import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService {
-  constructor(private readonly prisma: PrismaService) {}
-
   public async getUserEntityById(id: string): Promise<AuthUser | null> {
-    return this.prisma.user.findUnique({
+    return prisma.user.findUnique({
       where: { id },
     });
   }
 
   public async fetchAll(): Promise<UserResponse[]> {
-    const users = await this.prisma.user.findMany();
+    const users = await prisma.user.findMany();
     return users.map((user) => UserResponse.fromUserEntity(user));
   }
 
@@ -25,7 +23,7 @@ export class UserService {
     updateRequest: UpdateUserRequest,
   ): Promise<UserResponse> {
     try {
-      const updatedUser = await this.prisma.user.update({
+      const updatedUser = await prisma.user.update({
         where: { id: userId },
         data: {
           ...updateRequest,

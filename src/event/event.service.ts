@@ -1,5 +1,5 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '../common/services/prisma.service';
+import { prisma } from '../common/services/prisma.service';
 import { EventResponse } from './models';
 import { CreateEventRequest } from './models/request/create-event-request';
 import { UpdateEventRequest } from './models/request/update-event-request';
@@ -9,8 +9,6 @@ import { AppointmentResponse } from 'src/appointment/models';
 
 @Injectable()
 export class EventService {
-  constructor(private readonly prisma: PrismaService) {}
-
   public async fetchAll(
     name?: string,
     period?: PeriodFilter,
@@ -41,7 +39,7 @@ export class EventService {
           break;
       }
     }
-    const events = await this.prisma.event.findMany({
+    const events = await prisma.event.findMany({
       where: {
         deletedAt: null,
         ...(name && {
@@ -113,7 +111,7 @@ export class EventService {
         },
       }),
     };
-    const events = await this.prisma.event.findMany({
+    const events = await prisma.event.findMany({
       where: whereClause,
       skip: (page - 1) * limit,
       take: limit,
@@ -122,7 +120,7 @@ export class EventService {
       },
     });
     return {
-      total: await this.prisma.event.count({
+      total: await prisma.event.count({
         where: whereClause,
       }),
       page,
@@ -133,7 +131,7 @@ export class EventService {
 
   public async fetchById(id: string): Promise<EventResponse> {
     try {
-      const event = await this.prisma.event.findUnique({
+      const event = await prisma.event.findUnique({
         where: {
           id,
           deletedAt: null,
@@ -152,7 +150,7 @@ export class EventService {
   }
 
   public async create(createRequest: CreateEventRequest): Promise<void> {
-    await this.prisma.event.create({
+    await prisma.event.create({
       data: {
         ...createRequest,
         date: new Date(createRequest.date),
@@ -165,7 +163,7 @@ export class EventService {
     updateRequest: UpdateEventRequest,
   ): Promise<EventResponse> {
     try {
-      const event = await this.prisma.event.findUnique({
+      const event = await prisma.event.findUnique({
         where: {
           id,
           deletedAt: null,
@@ -176,7 +174,7 @@ export class EventService {
         throw new NotFoundException();
       }
 
-      const updatedEvent = await this.prisma.event.update({
+      const updatedEvent = await prisma.event.update({
         where: {
           id,
         },
@@ -196,7 +194,7 @@ export class EventService {
 
   public async delete(id: string): Promise<void> {
     try {
-      const event = await this.prisma.event.findUnique({
+      const event = await prisma.event.findUnique({
         where: {
           id,
           deletedAt: null,
@@ -207,7 +205,7 @@ export class EventService {
         throw new NotFoundException();
       }
 
-      await this.prisma.event.update({
+      await prisma.event.update({
         where: {
           id,
         },

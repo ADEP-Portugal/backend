@@ -13,7 +13,6 @@ import { LawsuitModule } from './lawsuit/lawsuit.module';
 import { TaskModule } from './task/task.module';
 import { UsefulLinkModule } from './useful-link/useful-link.module';
 import { AppService } from './app.service';
-import { PrismaService } from './common/services/prisma.service';
 import { FileModule } from './file/file.module';
 
 @Module({
@@ -43,7 +42,6 @@ import { FileModule } from './file/file.module';
       useClass: ThrottlerBehindProxyGuard,
     },
     AppService,
-    PrismaService,
   ],
   controllers: [AppController],
   exports: [AppService],

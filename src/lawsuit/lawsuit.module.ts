@@ -1,8 +1,7 @@
 import { Module } from '@nestjs/common';
 import { PassportModule } from '@nestjs/passport';
-import { PrismaService } from '../common/services/prisma.service';
-import { LawsuitController } from './lawsuit.controller';
 import { LawsuitService } from './lawsuit.service';
+import { LawsuitController } from './lawsuit.controller';
 import { JwtModule } from '@nestjs/jwt';
 import config from 'src/config';
 
@@ -16,7 +15,7 @@ import config from 'src/config';
       },
     }),
   ],
-  providers: [LawsuitService, PrismaService],
+  providers: [LawsuitService],
   exports: [LawsuitService],
   controllers: [LawsuitController],
 })
