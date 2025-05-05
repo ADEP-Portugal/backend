@@ -3,7 +3,6 @@ import {
   DocumentType,
   EducationLevel,
   Gender,
-  Nationality,
   QuotaStatus,
 } from '@prisma/client';
 import {
@@ -40,7 +39,7 @@ export class UpdateAssociateRequest {
 
   @IsNotEmpty()
   @IsString()
-  nationality: Nationality;
+  nationality: string;
 
   @IsNotEmpty()
   @IsString()

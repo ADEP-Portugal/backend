@@ -5,7 +5,6 @@ import type {
   EducationLevel,
   Event,
   Gender,
-  Nationality,
   QuotaStatus,
 } from '@prisma/client';
 
@@ -22,7 +21,7 @@ export class AssociateResponse {
 
   birthday: Date;
 
-  nationality: Nationality;
+  nationality: string;
 
   educationLevel: EducationLevel;
 
