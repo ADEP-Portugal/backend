@@ -126,7 +126,7 @@ export class LawsuitService {
     await prisma.lawsuit.create({
       data: {
         ...createRequest,
-        ...(createRequest.documentEmissionDate && {
+        ...(createRequest.documentEmissionDate && createRequest.documentEmissionDate != "" && {
           documentEmissionDate: new Date(createRequest.documentEmissionDate),
         }),
         ...(createRequest.documentExpirationDate && {
