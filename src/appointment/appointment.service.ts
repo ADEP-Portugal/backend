@@ -52,18 +52,18 @@ export class AppointmentService {
       },
       where: {
         deletedAt: null,
-        ...(client && {
-          client: {
-            contains: client,
-            mode: 'insensitive',
-          },
-        }),
-        ...(period && {
-          date: {
-            gte,
-            lte,
-          },
-        }),
+        // ...(client && {
+        //   client: {
+        //     contains: client,
+        //     mode: 'insensitive',
+        //   },
+        // }),
+        // ...(period && {
+        //   date: {
+        //     gte,
+        //     lte,
+        //   },
+        // }),
       },
       orderBy: {
         date: 'desc',
