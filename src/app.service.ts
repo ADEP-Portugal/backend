@@ -113,12 +113,26 @@ export class AppService {
         },
       },
     });
+    const lawsuits = await prisma.lawsuit.findMany({
+      where: {
+        deletedAt: null,
+        createdAt: {
+          gte,
+          lte,
+        },
+      },
+    });
+    const documentCount = lawsuits.reduce(
+      (count, lawsuit) => count + (lawsuit.fileNames?.length || 0),
+      0,
+    );
     return {
       appointmentCount: appointmentCount,
       taskCount: taskCount,
       eventCount: eventCount,
       associateCount: associateCount,
       lawsuitCount: lawsuitCount,
+      documentCount: documentCount,
     };
   }
 }

@@ -196,19 +196,19 @@ model Associate {
   id String @id @default(uuid()) @db.Uuid
   fullName             String
   email             String
-  gender             Gender
+  gender             Gender?
   phone             String
   birthday             DateTime @db.Date
-  nationality             String
-  educationLevel             EducationLevel
+  nationality             String?
+  educationLevel             EducationLevel?
   motherLanguage             String?
   availabilityToWork             AvailabilityToWork[]
-  address             String
+  address             String?
   profissionalExperience             String?
   areaInterest             String[]
   associateNumber             String?
   cardExpirationDate DateTime? @db.Date
-  quotaStatus             QuotaStatus
+  quotaStatus             QuotaStatus?
   documentType             DocumentType?
   document             String?
   documentEmissionDate             DateTime? @db.Date

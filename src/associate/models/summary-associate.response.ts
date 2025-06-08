@@ -7,7 +7,7 @@ export class SummaryAssociateResponse {
 
   phone: string;
 
-  gender: string;
+  gender: string | null;
 
   birthday: Date;
 

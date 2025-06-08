@@ -7,7 +7,7 @@ export class AssociateRecord {
 
   phone: string;
 
-  gender: Gender;
+  gender: Gender | null;
 
   birthday: Date;
 

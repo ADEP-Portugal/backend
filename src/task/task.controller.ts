@@ -9,12 +9,10 @@ import {
   Post,
   Put,
   Query,
-  UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { TaskService } from './task.service';
 import { TaskResponse, CreateTaskRequest, UpdateTaskRequest } from './models';
-import { AuthCookieGuardion } from 'src/common/guards/auth-cookie.guard';
 
 @ApiTags('tasks')
 @Controller('tasks')
@@ -33,9 +31,9 @@ export class TaskController {
     @Query('priority') priority?: string,
   ) {
     if (page && limit) {
-      return this.lawsuitService.fetchAllPaginated(page, limit, client);
+      return this.lawsuitService.fetchAllPaginated(page, limit, client, status, priority);
     }
-    return this.lawsuitService.fetchAll(client);
+    return this.lawsuitService.fetchAll(client, status, priority);
   }
 
   @ApiBearerAuth()

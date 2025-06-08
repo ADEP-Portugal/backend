@@ -15,21 +15,21 @@ export class AssociateResponse {
 
   email: string;
 
-  gender: Gender;
+  gender: Gender | null;
 
   phone: string;
 
   birthday: Date;
 
-  nationality: string;
+  nationality: string | null;
 
-  educationLevel: EducationLevel;
+  educationLevel: EducationLevel | null;
 
   motherLanguage: string | null;
 
   availabilityToWork: AvailabilityToWork[];
 
-  address: string;
+  address: string | null;
 
   profissionalExperience: string | null;
 
@@ -39,7 +39,7 @@ export class AssociateResponse {
 
   cardExpirationDate: Date | null;
 
-  quotaStatus: QuotaStatus;
+  quotaStatus: QuotaStatus | null;
 
   documentType: DocumentType | null;
 

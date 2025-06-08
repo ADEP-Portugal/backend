@@ -25,7 +25,7 @@ export class CreateAssociateRequest {
   @IsEmail()
   email: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   gender: Gender;
 
@@ -37,11 +37,11 @@ export class CreateAssociateRequest {
   @IsString()
   birthday: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   nationality: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   educationLevel: EducationLevel;
 
@@ -52,7 +52,7 @@ export class CreateAssociateRequest {
   @IsOptional()
   availabilityToWork: AvailabilityToWork[];
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   address: string;
 

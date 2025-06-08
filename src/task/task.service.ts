@@ -1,10 +1,15 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { prisma } from '../common/services/prisma.service';
 import { TaskResponse, CreateTaskRequest, UpdateTaskRequest } from './models';
+import { Priority, TaskStatus } from '@prisma/client';
 
 @Injectable()
 export class TaskService {
-  public async fetchAll(client?: string): Promise<TaskResponse[]> {
+  public async fetchAll(
+    client?: string,
+    status?: string,
+    priority?: string,
+  ): Promise<TaskResponse[]> {
     const tasks = await prisma.task.findMany({
       include: {
         user: {
@@ -29,6 +34,14 @@ export class TaskService {
             mode: 'insensitive',
           },
         }),
+        ...(status &&
+          status !== 'ALL' && {
+            status: status as TaskStatus,
+          }),
+        ...(priority &&
+          priority !== 'ALL' && {
+            priority: priority as Priority,
+          }),
       },
     });
     return tasks.map((task) =>
@@ -40,6 +53,8 @@ export class TaskService {
     page: number,
     limit: number,
     client?: string,
+    status?: string,
+    priority?: string,
   ): Promise<{
     total: number;
     page: number;
@@ -54,6 +69,14 @@ export class TaskService {
           mode: 'insensitive',
         },
       }),
+      ...(status &&
+        status !== 'ALL' && {
+          status: status as TaskStatus,
+        }),
+      ...(priority &&
+        priority !== 'ALL' && {
+          priority: priority as Priority,
+        }),
     };
     const tasks = await prisma.task.findMany({
       where: whereClause,
