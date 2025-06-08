@@ -117,14 +117,12 @@ export class AppointmentService {
     }
     const whereClause: any = {
       deletedAt: null,
-      ...(client?.trim()
-        ? {
-            client: {
-              contains: client,
-              mode: 'insensitive',
-            },
-          }
-        : {}),
+      ...(client && {
+        client: {
+          contains: client,
+          mode: 'insensitive',
+        },
+      }),
       ...(period && {
         date: {
           gte,
