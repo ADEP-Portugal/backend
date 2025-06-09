@@ -70,7 +70,7 @@ export class UpdateLawsuitRequest {
   @IsString()
   responsible: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   description: string;
 

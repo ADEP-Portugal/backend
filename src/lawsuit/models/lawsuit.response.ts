@@ -19,13 +19,13 @@ export class LawsuitResponse {
 
   document: string | null;;
 
-  description: string;
+  description: string | null;
 
   responsible: string;
 
   orderDate: Date;
 
-  deadline: Date;
+  deadline: Date | null;
 
   documentEmissionDate: Date | null;
 

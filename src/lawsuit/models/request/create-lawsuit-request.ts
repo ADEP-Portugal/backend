@@ -66,7 +66,7 @@ export class CreateLawsuitRequest {
   @IsString()
   responsible: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   description: string;
 

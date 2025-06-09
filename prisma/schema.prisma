@@ -157,10 +157,10 @@ model Lawsuit {
   documentEmissionDate             DateTime? @db.Date
   documentExpirationDate             DateTime? @db.Date
   orderDate             DateTime @db.Date
-  deadline             DateTime @db.Date
+  deadline             DateTime? @db.Date
   responsible     String      @db.Uuid
   user       User     @relation(fields: [responsible], references: [id], onDelete: Cascade)
-  description             String
+  description             String?
   fileNames             String[]
   task             Task[]
   deletedAt DateTime?
