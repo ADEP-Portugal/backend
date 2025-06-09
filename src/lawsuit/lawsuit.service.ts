@@ -44,6 +44,9 @@ export class LawsuitService {
           },
         }),
       },
+      orderBy: {
+        createdAt: 'desc',
+      },
     });
     return lawsuits.map((lawsuit) =>
       LawsuitResponse.fromLawsuitEntity(lawsuit, lawsuit.user.fullName),
@@ -81,6 +84,9 @@ export class LawsuitService {
       },
       skip: (page - 1) * limit,
       take: limit,
+      orderBy: {
+        createdAt: 'desc',
+      },
     });
     return {
       total: await prisma.lawsuit.count({
@@ -126,9 +132,10 @@ export class LawsuitService {
     await prisma.lawsuit.create({
       data: {
         ...createRequest,
-        ...(createRequest.documentEmissionDate && createRequest.documentEmissionDate != "" && {
-          documentEmissionDate: new Date(createRequest.documentEmissionDate),
-        }),
+        ...(createRequest.documentEmissionDate &&
+          createRequest.documentEmissionDate != '' && {
+            documentEmissionDate: new Date(createRequest.documentEmissionDate),
+          }),
         ...(createRequest.documentExpirationDate && {
           documentExpirationDate: new Date(
             createRequest.documentExpirationDate,

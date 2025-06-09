@@ -6,9 +6,7 @@ import { UsefulLinkResponse } from './models/useful-link.response';
 
 @Injectable()
 export class UsefulLinkService {
-  public async fetchAll(
-    title?: string,
-  ): Promise<UsefulLinkResponse[]> {
+  public async fetchAll(title?: string): Promise<UsefulLinkResponse[]> {
     const usefulLinks = await prisma.usefulLink.findMany({
       where: {
         deletedAt: null,
@@ -19,8 +17,13 @@ export class UsefulLinkService {
           },
         }),
       },
+      orderBy: {
+        createdAt: 'desc',
+      },
     });
-    return usefulLinks.map((usefulLink) => UsefulLinkResponse.fromUsefulLinkEntity(usefulLink));
+    return usefulLinks.map((usefulLink) =>
+      UsefulLinkResponse.fromUsefulLinkEntity(usefulLink),
+    );
   }
 
   public async fetchAllPaginated(
@@ -46,6 +49,9 @@ export class UsefulLinkService {
       where: whereClause,
       skip: (page - 1) * limit,
       take: limit,
+      orderBy: {
+        createdAt: 'desc',
+      },
     });
     return {
       total: await prisma.usefulLink.count({
@@ -53,7 +59,9 @@ export class UsefulLinkService {
       }),
       page,
       limit,
-      data: usefulLinks.map((usefulLink) => UsefulLinkResponse.fromUsefulLinkEntity(usefulLink)),
+      data: usefulLinks.map((usefulLink) =>
+        UsefulLinkResponse.fromUsefulLinkEntity(usefulLink),
+      ),
     };
   }
 

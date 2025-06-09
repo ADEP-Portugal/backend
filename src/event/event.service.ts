@@ -55,6 +55,9 @@ export class EventService {
           },
         }),
       },
+      orderBy: {
+        date: 'desc',
+      },
     });
     return events.map((event) => EventResponse.fromEventEntity(event));
   }

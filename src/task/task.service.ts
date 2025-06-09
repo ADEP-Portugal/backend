@@ -43,6 +43,9 @@ export class TaskService {
             priority: priority as Priority,
           }),
       },
+      orderBy: {
+        createdAt: 'desc',
+      },
     });
     return tasks.map((task) =>
       TaskResponse.fromTaskEntity(task, task.user.fullName, task.lawsuit),
@@ -97,6 +100,9 @@ export class TaskService {
       },
       skip: (page - 1) * limit,
       take: limit,
+      orderBy: {
+        createdAt: 'desc',
+      },
     });
     return {
       total: await prisma.task.count({

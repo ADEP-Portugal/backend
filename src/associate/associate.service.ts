@@ -137,7 +137,14 @@ export class AssociateService {
           const todayTomorrow = new Date();
           const dayTomorrow = todayTomorrow.getDate() + 1;
           gte = new Date(1900, todayTomorrow.getMonth(), dayTomorrow);
-          lte = new Date(2100, todayTomorrow.getMonth(), dayTomorrow, 23, 59, 59);
+          lte = new Date(
+            2100,
+            todayTomorrow.getMonth(),
+            dayTomorrow,
+            23,
+            59,
+            59,
+          );
           break;
         case PeriodFilter.THIS_WEEK:
           const { startOfWeek, endOfWeek } = getCurrentWeekRange();
@@ -190,6 +197,9 @@ export class AssociateService {
       where: whereClause,
       skip: (page - 1) * limit,
       take: limit,
+      orderBy: {
+        createdAt: 'desc',
+      },
     });
     return {
       total: await prisma.associate.count({
