@@ -33,7 +33,6 @@ export class FileController {
   @UseInterceptors(
     FilesInterceptor('files', 10, {
       storage: diskStorage({
-        destination: './uploads',
         filename: (req, file, cb) => {
           cb(null, file.originalname);
         },
@@ -61,7 +60,7 @@ export class FileController {
     @Res() res: Response,
   ) {
     const remotePath = process.env.SFTP_PATH + filename;
-    const localPath = path.join(__dirname, '..', '..', 'temp', filename);
+    const localPath = path.join(__dirname, '..', '..', '..', 'temp', filename);
 
     await this.fileService.downloadFile(remotePath, localPath);
 
