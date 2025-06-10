@@ -23,7 +23,7 @@ export class AppointmentResponse {
 
   associate: boolean;
 
-  phone: string | undefined;
+  phone: string | null;
 
   static fromAppointmentEntity(entity: Appointment, userId: string, responsible: string): AppointmentResponse {
     const response = new AppointmentResponse();
