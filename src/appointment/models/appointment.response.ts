@@ -23,6 +23,8 @@ export class AppointmentResponse {
 
   associate: boolean;
 
+  phone: string | undefined;
+
   static fromAppointmentEntity(entity: Appointment, userId: string, responsible: string): AppointmentResponse {
     const response = new AppointmentResponse();
     response.id = entity.id;
@@ -36,6 +38,7 @@ export class AppointmentResponse {
     response.responsible = responsible;
     response.gender = entity.gender;
     response.associate = entity.associate;
+    response.phone = entity.phone;
     return response;
   }
 }

@@ -4,6 +4,7 @@ import {
   IsDateString,
   IsMilitaryTime,
   IsNotEmpty,
+  IsOptional,
   IsString,
   MaxLength,
 } from 'class-validator';
@@ -45,4 +46,8 @@ export class CreateAppointmentRequest {
   @IsNotEmpty()
   @IsBoolean()
   associate: boolean;
+
+  @IsOptional()
+  @IsString()
+  phone: string;
 }

@@ -85,6 +85,7 @@ model Appointment {
   responsible     String      @db.Uuid
   user       User     @relation(fields: [responsible], references: [id], onDelete: Cascade)
   description             String
+  phone             String?
   deletedAt DateTime?
   createdAt DateTime @default(dbgenerated("timezone('UTC'::text, now())")) @db.Timestamp(6)
   updatedAt DateTime?
