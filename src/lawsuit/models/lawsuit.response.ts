@@ -5,7 +5,7 @@ export class LawsuitResponse {
 
   client: string;
 
-  birthday: Date;
+  birthday: Date | null;
 
   phone: string;
 
@@ -42,12 +42,12 @@ export class LawsuitResponse {
   static fromLawsuitEntity(entity: Lawsuit, responsible: string): LawsuitResponse {
     const response = new LawsuitResponse();
     response.id = entity.id;
-    response.client = entity.client;
+    response.client = entity.client || '';
     response.description = entity.description;
     response.responsible = responsible;
     response.birthday = entity.birthday;
-    response.phone = entity.phone ?? '';
-    response.email = entity.email ?? '';
+    response.phone = entity.phone || '';
+    response.email = entity.email || '';
     response.orderType = entity.orderType;
     response.status = entity.status;
     response.documentType = entity.documentType;

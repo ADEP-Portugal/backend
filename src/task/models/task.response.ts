@@ -28,7 +28,7 @@ export class TaskResponse {
   static fromTaskEntity(
     entity: Task,
     responsible: string,
-    lawsuit: { client: string; orderType: LawsuitOrderType, id: string } | null,
+    lawsuit: { client: string | null; orderType: LawsuitOrderType, id: string } | null,
   ): TaskResponse {
     const response = new TaskResponse();
     response.id = entity.id;
@@ -41,7 +41,7 @@ export class TaskResponse {
     response.status = entity.status;
     response.title = entity.title;
     if (lawsuit) {
-      response.lawsuitClient = lawsuit.client;
+      response.lawsuitClient = lawsuit.client || '';
       response.lawsuitOrderType = lawsuit.orderType;
       response.lawsuitId = lawsuit.id;
     }
