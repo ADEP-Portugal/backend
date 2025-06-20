@@ -96,6 +96,7 @@ model Appointment {
 enum DocumentType {
   ID_CARD
   PASSPORT
+  CC
   OTHER
 }
 
