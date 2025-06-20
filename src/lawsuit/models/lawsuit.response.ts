@@ -37,6 +37,8 @@ export class LawsuitResponse {
 
   fileNames: string[];
 
+  orderTypeDescription: string | null;
+
   static fromLawsuitEntity(entity: Lawsuit, responsible: string): LawsuitResponse {
     const response = new LawsuitResponse();
     response.id = entity.id;
@@ -44,8 +46,8 @@ export class LawsuitResponse {
     response.description = entity.description;
     response.responsible = responsible;
     response.birthday = entity.birthday;
-    response.phone = entity.phone;
-    response.email = entity.email;
+    response.phone = entity.phone ?? '';
+    response.email = entity.email ?? '';
     response.orderType = entity.orderType;
     response.status = entity.status;
     response.documentType = entity.documentType;
@@ -57,6 +59,7 @@ export class LawsuitResponse {
     response.paymentStatus = entity.paymentStatus;
     response.type = entity.type;
     response.fileNames = entity.fileNames;
+    response.orderTypeDescription = entity.orderTypeDescription;
     return response;
   }
 }

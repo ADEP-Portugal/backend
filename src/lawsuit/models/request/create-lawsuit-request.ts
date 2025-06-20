@@ -80,4 +80,8 @@ export class CreateLawsuitRequest {
 
   @IsOptional()
   fileNames: string[];
+
+  @IsOptional()
+  @IsString()
+  orderTypeDescription: string;
 }

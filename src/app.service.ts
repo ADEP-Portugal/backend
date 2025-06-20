@@ -11,12 +11,13 @@ export class AppService {
     eventCount: number;
     associateCount: number;
     lawsuitCount: number;
+    newAssociateCount: number;
   }> {
     let gte: Date = new Date(
       Date.UTC(
         date.getFullYear(),
         date.getMonth(),
-        date.getDate() + 1,
+        date.getDate(),
         0,
         0,
         0,
@@ -26,7 +27,7 @@ export class AppService {
       Date.UTC(
         date.getFullYear(),
         date.getMonth(),
-        date.getDate() + 1,
+        date.getDate(),
         23,
         59,
         59,
@@ -41,6 +42,7 @@ export class AppService {
     eventCount: number;
     associateCount: number;
     lawsuitCount: number;
+    newAssociateCount: number;
   }> {
     let gte: Date | undefined = undefined;
     let lte: Date | undefined = undefined;
@@ -99,6 +101,14 @@ export class AppService {
       where: {
         deletedAt: null,
         createdAt: {
+          lte,
+        },
+      },
+    });
+    const newAssociateCount = await prisma.associate.count({
+      where: {
+        deletedAt: null,
+        createdAt: {
           gte,
           lte,
         },
@@ -133,6 +143,7 @@ export class AppService {
       associateCount: associateCount,
       lawsuitCount: lawsuitCount,
       documentCount: documentCount,
+      newAssociateCount: newAssociateCount,
     };
   }
 }

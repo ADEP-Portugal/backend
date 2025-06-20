@@ -84,4 +84,8 @@ export class UpdateLawsuitRequest {
 
   @IsOptional()
   fileNames: string[];
+
+  @IsOptional()
+  @IsString()
+  orderTypeDescription: string;
 }

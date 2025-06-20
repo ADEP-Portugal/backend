@@ -103,6 +103,9 @@ export class AssociateService {
       params.push(month);
       query += ` AND EXTRACT(MONTH FROM "birthday") = $${params.length}`;
     }
+    query += `
+      ORDER BY "associateNumber" DESC
+    `;
     const associates: Array<Associate> = await prisma.$queryRawUnsafe(
       query,
       ...params,
@@ -198,7 +201,7 @@ export class AssociateService {
       skip: (page - 1) * limit,
       take: limit,
       orderBy: {
-        createdAt: 'desc',
+        associateNumber: 'desc',
       },
     });
     return {

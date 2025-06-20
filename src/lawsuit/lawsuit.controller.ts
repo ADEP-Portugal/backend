@@ -20,6 +20,7 @@ import {
 } from './models';
 import { SummaryLawsuitResponse } from './models/summary-lawsuit.response';
 import { AuthCookieGuardion } from 'src/common/guards/auth-cookie.guard';
+import { PeriodFilter } from 'src/types/period-filter';
 
 @ApiTags('lawsuits')
 @Controller('lawsuits')
@@ -28,22 +29,22 @@ export class LawsuitController {
 
   @ApiBearerAuth()
   @Get()
-  
   @HttpCode(HttpStatus.OK)
   async fetchAll(
     @Query('page') page?: number,
     @Query('limit') limit?: number,
     @Query('client') client?: string,
+    @Query('period') period?: PeriodFilter,
+    @Query('archived') archived?: boolean,
   ) {
     if (page && limit) {
-      return this.lawsuitService.fetchAllPaginated(page, limit, client);
+      return this.lawsuitService.fetchAllPaginated(page, limit, client, period, archived);
     }
-    return this.lawsuitService.fetchAll(client);
+    return this.lawsuitService.fetchAll(client, period, archived);
   }
 
   @ApiBearerAuth()
   @Get('summary')
-  
   @HttpCode(HttpStatus.OK)
   async fetchSummary(): Promise<SummaryLawsuitResponse[]> {
     return this.lawsuitService.fetchSummary();
@@ -51,7 +52,6 @@ export class LawsuitController {
 
   @ApiBearerAuth()
   @Get(':id')
-  
   @HttpCode(HttpStatus.OK)
   async fetchById(@Param('id') id: string): Promise<LawsuitResponse> {
     return this.lawsuitService.fetchById(id);
@@ -59,7 +59,6 @@ export class LawsuitController {
 
   @ApiBearerAuth()
   @Post()
-  
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() createRequest: CreateLawsuitRequest): Promise<void> {
     return await this.lawsuitService.create(createRequest);
@@ -67,7 +66,6 @@ export class LawsuitController {
 
   @ApiBearerAuth()
   @Put(':id')
-  
   @HttpCode(HttpStatus.OK)
   async update(
     @Param('id') id: string,
@@ -78,7 +76,6 @@ export class LawsuitController {
 
   @ApiBearerAuth()
   @Delete(':id')
-  
   @HttpCode(HttpStatus.OK)
   async delete(@Param('id') id: string): Promise<void> {
     return this.lawsuitService.delete(id);

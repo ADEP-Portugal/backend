@@ -6,6 +6,9 @@ import {
   UpdateLawsuitRequest,
 } from './models';
 import { SummaryLawsuitResponse } from './models/summary-lawsuit.response';
+import { PeriodFilter } from 'src/types/period-filter';
+import { getCurrentWeekRange, getCurrentMonthRange } from 'src/utils/date.util';
+import { LawsuitStatus } from '@prisma/client';
 
 @Injectable()
 export class LawsuitService {
@@ -25,7 +28,37 @@ export class LawsuitService {
     );
   }
 
-  public async fetchAll(client?: string): Promise<LawsuitResponse[]> {
+  public async fetchAll(
+    client?: string,
+    period?: PeriodFilter,
+    archived?: boolean,
+  ): Promise<LawsuitResponse[]> {
+    let gte: Date | undefined = undefined;
+    let lte: Date | undefined = undefined;
+    if (period) {
+      switch (period) {
+        case PeriodFilter.TODAY:
+          gte = new Date();
+          lte = new Date();
+          break;
+        case PeriodFilter.THIS_WEEK:
+          const { startOfWeek, endOfWeek } = getCurrentWeekRange();
+          gte = startOfWeek;
+          lte = endOfWeek;
+          break;
+        case PeriodFilter.THIS_MONTH:
+          const { startOfMonth, endOfMonth } = getCurrentMonthRange();
+          gte = startOfMonth;
+          lte = endOfMonth;
+          break;
+        case PeriodFilter.ALL:
+          lte = undefined;
+          break;
+        default:
+          lte = undefined;
+          break;
+      }
+    }
     const lawsuits = await prisma.lawsuit.findMany({
       include: {
         user: {
@@ -43,9 +76,24 @@ export class LawsuitService {
             mode: 'insensitive',
           },
         }),
+        ...(period && {
+          orderDate: {
+            gte,
+            lte,
+          },
+        }),
+        ...(archived
+          ? {
+              status: { equals: LawsuitStatus.ARCHIVED },
+            }
+          : {
+              status: {
+                not: LawsuitStatus.ARCHIVED,
+              },
+            }),
       },
       orderBy: {
-        createdAt: 'desc',
+        orderDate: 'desc',
       },
     });
     return lawsuits.map((lawsuit) =>
@@ -57,12 +105,40 @@ export class LawsuitService {
     page: number,
     limit: number,
     client?: string,
+    period?: PeriodFilter,
+    archived?: boolean,
   ): Promise<{
     total: number;
     page: number;
     limit: number;
     data: LawsuitResponse[];
   }> {
+    let gte: Date | undefined = undefined;
+    let lte: Date | undefined = undefined;
+    if (period) {
+      switch (period) {
+        case PeriodFilter.TODAY:
+          gte = new Date();
+          lte = new Date();
+          break;
+        case PeriodFilter.THIS_WEEK:
+          const { startOfWeek, endOfWeek } = getCurrentWeekRange();
+          gte = startOfWeek;
+          lte = endOfWeek;
+          break;
+        case PeriodFilter.THIS_MONTH:
+          const { startOfMonth, endOfMonth } = getCurrentMonthRange();
+          gte = startOfMonth;
+          lte = endOfMonth;
+          break;
+        case PeriodFilter.ALL:
+          lte = undefined;
+          break;
+        default:
+          lte = undefined;
+          break;
+      }
+    }
     const whereClause: any = {
       deletedAt: null,
       ...(client && {
@@ -71,6 +147,23 @@ export class LawsuitService {
           mode: 'insensitive',
         },
       }),
+      ...(period && {
+        orderDate: {
+          gte,
+          lte,
+        },
+      }),
+      ...(archived
+        ? {
+            status: {
+              equals: LawsuitStatus.ARCHIVED,
+            },
+          }
+        : {
+            status: {
+              not: LawsuitStatus.ARCHIVED,
+            },
+          }),
     };
     const lawsuits = await prisma.lawsuit.findMany({
       where: whereClause,
@@ -85,7 +178,7 @@ export class LawsuitService {
       skip: (page - 1) * limit,
       take: limit,
       orderBy: {
-        createdAt: 'desc',
+        orderDate: 'desc',
       },
     });
     return {
@@ -189,6 +282,7 @@ export class LawsuitService {
           birthday: new Date(updateRequest.birthday),
           orderDate: new Date(updateRequest.orderDate),
           deadline: new Date(updateRequest.deadline),
+          updatedAt: new Date(),
         },
       });
 
